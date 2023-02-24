@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import validator from 'validator'
 import {
   ThemeProvider,
   TextField,
@@ -31,6 +32,7 @@ import Theme from "../../CustomTheme";
 import moment from "moment-timezone";
 import { db } from "../../firebase-config";
 import { useNavigate } from "react-router-dom";
+import '../../App.css';
 import {
   collection,
   addDoc,
@@ -40,6 +42,8 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { sm, transactionsAcad, yrSN, yrSections } from "../Selectfunctions";
+import { async } from "@firebase/util";
+import { red } from "@mui/material/colors";
 
 // Function for generate random number
 function randomNumberInRange(min, max) {
@@ -61,7 +65,8 @@ const Form = () => {
   const navigate = useNavigate();
   const userCollection1 = collection(db, "acadQueuing");
   const userCollection2 = collection(db, "acadPriority");
-  const [error, setError] = useState(true);
+  const [error, setError] = useState(false);
+  const [emailError, setEmailError] = useState('')
   let fullStudentNumber = snYear + "-" + studentNumber + "-" + branch;
 
   const timezone = "Asia/Manila";
@@ -70,8 +75,8 @@ const Form = () => {
   useEffect(() => {
     const checkTime = () => {
       let currentTime = moment().tz(timezone);
-      let startTime = moment.tz("08:00", "HH:mm a", timezone);
-      let endTime = moment.tz("24:00", "HH:mm a", timezone);
+      let startTime = moment.tz("24:00", "HH:mm a", timezone);
+      let endTime = moment.tz("17:00", "HH:mm a", timezone);
 
       if (currentTime.isBetween(startTime, endTime)) {
         sessionStorage.setItem("Auth", "true");
@@ -86,7 +91,7 @@ const Form = () => {
 
   useEffect(() => {
     if (sessionStorage.getItem("Auth") === "false") {
-      navigate("/");
+      //navigate("/");
     }
   });
 
@@ -116,6 +121,16 @@ const Form = () => {
     }
   };
 
+  const validateEmail = (e) => {
+    setEmail(e.target.value);
+  
+    if (validator.isEmail(email)) {
+      setEmailError(true)
+    } else {
+      setEmailError(false)
+    }
+  }
+
   const numOnlyContact = (e) => {
     const re = /^[0-9\b]+$/;
     if (e.target.value === "" || re.test(e.target.value)) {
@@ -140,6 +155,53 @@ const Form = () => {
     setYearSection("");
     setEmail("");
   };
+
+  const handleErr =() =>{
+    console.log(emailError);
+    if (name.length > 0 && transaction.length > 0 && selectedForm.length > 0 &&
+      selectedUser.length > 0){
+        if(selectedUser === "Student"){
+          if (
+            email.length > 0 &&
+            studentNumber.length > 0 &&
+            branch.length > 0 &&
+            snYear.length > 0){
+              if(name.length > 3){
+                setError(false);
+                creatingUser();
+              }else{
+                setError(true);
+                alert("Please check your name");
+              }
+              
+          }
+          else{
+              setError(true);
+              alert("Please fill the required field/s");
+            }
+          }
+
+        else if (selectedUser === "Guest/Parent/Alumni") {
+          if (contact.length > 0 && contact.length === 11){
+            setError(false);
+            creatingUser();
+          }
+          else{
+            setError(true);
+            if (contact.length === 0){
+              alert("Please fill the required field/s");
+            }
+            else if (contact.length < 11){
+              alert("Please check your contact number");
+            }
+          }
+        }
+      }
+      else{
+        alert("Fill required field/s");
+        setError(true);
+      }
+    }
 
   const insert = async () => {
     let subemail = email;
@@ -197,8 +259,7 @@ const Form = () => {
   };
 
   // Function for inserting user between (priorty or regular)
-
-  const checkExisting = async () => {
+  const checkExistingOnQue = async () => {
     let x = 0;
     let y = 0;
 
@@ -361,8 +422,7 @@ const Form = () => {
     }
   };
 
-  // Validating for creating user
-  const creatingUser = async () => {
+  const generateTicket=async()=>{
     if (selectedForm === "Priority") {
       window.ticket = "P" + randomNumberInRange(99, 499);
     } else if (selectedForm === "Normal") {
@@ -458,36 +518,12 @@ const Form = () => {
         });
       } while (ctr > 0);
     }
-    // Chkeck if student number or email are exist/s in queline
+  }
 
-    // form requied fields validation
-    if (selectedUser === "Student") {
-      if (
-        name.length > 0 &&
-        selectedForm.length > 0 &&
-        transaction.length > 0 &&
-        email.length > 0 &&
-        studentNumber.length > 0 &&
-        branch.length > 0
-      ) {
-        checkExisting();
-      } else {
-        alert("Please fill all the reqiured fields!");
-      }
-    } else if (selectedUser === "Guest/Parent/Alumni") {
-      if (
-        name.length > 0 &&
-        selectedForm.length > 0 &&
-        transaction.length > 0 &&
-        contact.length === 11
-      ) {
-        checkExisting();
-      } else {
-        alert("Please fill all the reqiured fields!");
-      }
-    } else {
-      alert("Please fill all the reqiured fields!");
-    }
+  // Validating for creating user
+  const creatingUser = async () => {
+    checkExistingOnQue();
+    generateTicket();
   };
 
   return (
@@ -498,7 +534,7 @@ const Form = () => {
           pt: { lg: 5, md: 20, sx: 0 },
         }}
       >
-        <form className="acadForm">
+        <form className="acadForm" onSubmit={handleErr}>
           <ThemeProvider theme={Theme}>
             <Box
               sx={{
@@ -539,11 +575,14 @@ const Form = () => {
                       ),
                     }}
                   />
-                  error?
-                  <label>
-                    Input characters
-                  </label>
-                  
+                  {error && name.length === 0?
+                  <label className="red-text">
+                    Name can't be empty
+                  </label>:""}
+                  {error && name.length >0 && name.length <= 3?
+                  <label className="red-text">
+                    Please enter valid name
+                  </label>:""}
                   <FormControl fullWidth required>
                     <InputLabel
                       id="demo-multiple-name-label"
@@ -588,6 +627,10 @@ const Form = () => {
                       ))}
                     </Select>
                   </FormControl>
+                  {error && transaction.length === 0?
+                  <label className="red-text">
+                    Select transaction
+                  </label>:""}
                   
                   <FormControl>
                     <FormLabel
@@ -595,7 +638,7 @@ const Form = () => {
                       color="pupMaroon"
                       required
                     >
-                      Type of Transaction
+                      Type of Transaction Lane
                     </FormLabel>
                     <RadioGroup
                       row
@@ -616,6 +659,10 @@ const Form = () => {
                         label="PWD/Pregnant/Senior"
                       />
                     </RadioGroup>
+                    {error && selectedForm.length === 0?
+                      <label className="red-text">
+                        Choose Lane
+                      </label>:""}
                   </FormControl>
                   <FormControl>
                     <FormLabel
@@ -649,6 +696,10 @@ const Form = () => {
                         label="Guest/Parent/Alumni"
                       />
                     </RadioGroup>
+                    {error && selectedUser.length === 0?
+                      <label className="red-text">
+                        Choose User
+                      </label>:""}
                     {selectedUser === "Student" && (
                       <>
                         <Stack spacing={2} direction="column">
@@ -686,7 +737,6 @@ const Form = () => {
                                 ))}
                               </Select>
                             </FormControl>
-
                             <TextField
                               required
                               type="text"
@@ -733,6 +783,10 @@ const Form = () => {
                               </Select>
                             </FormControl>
                           </Stack>
+                          {error && snYear.length === 0 || studentNumber.length === 0 || branch.length === 0?
+                              <label className="red-text">
+                                Student Number can't be empty
+                              </label>:""}
 
                           <FormControl fullWidth>
                             <InputLabel
@@ -767,9 +821,7 @@ const Form = () => {
                             label="Email"
                             value={email}
                             placeholder="Ex. JuanDelacruz@yahoo.com"
-                            onChange={(e) => {
-                              setEmail(e.target.value);
-                            }}
+                            onChange={(e) => validateEmail(e)}
                             color="pupMaroon"
                             InputProps={{
                               endAdornment: (
@@ -779,6 +831,14 @@ const Form = () => {
                               ),
                             }}
                           />
+                          {error && email.length === 0?
+                              <label className="red-text">
+                                Email can't be empty
+                              </label>:""}
+                          {error && email.length > 0 && !emailError?
+                          <label className="red-text">
+                            Invalid Email
+                           </label>:""}
                         </Stack>
                       </>
                     )}
@@ -798,6 +858,10 @@ const Form = () => {
                             color="pupMaroon"
                             maxlength="10"
                           />
+                          {error && contact.length === 0?
+                            <label className="red-text">Contact can't be empty</label>:""}
+                          {error && contact.length > 0 && contact.length <11 ?
+                            <label className="red-text">Contact must 11 digit</label>:""}
                           <TextField
                             type="email"
                             id="outlined-textarea"
@@ -858,7 +922,7 @@ const Form = () => {
                         type="submit"
                         variant="contained"
                         color="pupMaroon"
-                        onClick={creatingUser}
+                        onClick={handleErr}
                         endIcon={<ChevronRight />}
                         component={motion.div}
                         whileHover={{

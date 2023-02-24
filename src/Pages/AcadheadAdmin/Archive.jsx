@@ -38,6 +38,7 @@ import {
   addDoc,
   serverTimestamp,
 } from "firebase/firestore";
+import { Stack } from "@mui/system";
 
 // table header syle
 const styleTableHead = createTheme({
@@ -257,16 +258,18 @@ const Archive = () => {
           />
         </Box>
         <Box mx={5} sx={{ display: "flex", justifyContent: "end" }}>
-          <Button
-            onClick={deleteAllPermanentData}
-            variant="outlined"
-            color="pupMaroon"
-          >
-            Delete All
-          </Button>
-          <Button onClick={viewAll} variant="outlined" color="pupMaroon">
-            View All
-          </Button>
+          <Stack spacing={1.5} direction="row">
+            <Button
+              onClick={deleteAllPermanentData}
+              variant="outlined"
+              color="pupMaroon"
+            >
+              Delete All
+            </Button>
+            <Button onClick={viewAll} variant="outlined" color="pupMaroon">
+              Refresh
+            </Button>
+          </Stack>
         </Box>
         <Box px={5} py={2} mb={5}>
           <TableContainer
