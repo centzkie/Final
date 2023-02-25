@@ -40,6 +40,7 @@ import {
   where,
   query,
   getDocs,
+  getCountFromServer
 } from "firebase/firestore";
 import { sm, transactionsAcad, yrSN, yrSections } from "../Selectfunctions";
 import { async } from "@firebase/util";
@@ -68,6 +69,8 @@ const Form = () => {
   const [error, setError] = useState(false);
   const [emailError, setEmailError] = useState('')
   let fullStudentNumber = snYear + "-" + studentNumber + "-" + branch;
+  let [countData,setCount] = useState();
+  let k = 0;
 
   const timezone = "Asia/Manila";
 
@@ -90,8 +93,23 @@ const Form = () => {
   }, []);
 
   useEffect(() => {
+    const checkTime = async() => {
+      count();
+    };
+    
+    const intervalId = setInterval(checkTime, 5000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
     if (sessionStorage.getItem("Auth") === "false") {
       //navigate("/");
+    }
+    if(countData === 5)
+    {
+      alert("Slot full");
+      navigate("/");
     }
   });
 

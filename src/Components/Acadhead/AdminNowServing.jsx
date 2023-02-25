@@ -90,7 +90,7 @@ const AdminNowServing = () => {
 
   const current = new Date();
   const [date, setDate] = useState(
-    `${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()}`
+    `${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()} - ${current.toLocaleTimeString("en-US")}`
   );
 
   for (let i = 1; i <= Math.ceil(qlUserData.length / QlPostPerPage); i++) {

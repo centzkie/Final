@@ -49,10 +49,6 @@ const GenerateAcad = () => {
     return aheadTicket;
   };
 
-  useEffect(() => {
-    count();
-  });
-
   const navigate = useNavigate();
   const landing = () => {
     navigate("/");

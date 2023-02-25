@@ -99,7 +99,7 @@ const Report = () => {
   const [isDisable, setIsDisable] = useState(true);
   const current = new Date();
   const [date, setDate] = useState(
-    `${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()}`
+    `${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()}-${current.toLocaleTimeString("en-US")}`
   );
   const userCollectionArchieve = collection(db, "acadArchieve");
 
@@ -189,8 +189,13 @@ const Report = () => {
   };
 
   const deleteAll = () => {
-    if (window.confirm("Are you sure you want to delete ?")) {
-      moveAllData();
+    if(qlUserData.length>0){
+      if (window.confirm("Are you sure you want to delete ?")) {
+        moveAllData();
+      }
+    }
+    else{
+      alert("Delete failed: No data filtered");
     }
   };
 
@@ -198,27 +203,52 @@ const Report = () => {
     let docRef = doc(db, "acadSummaryreport", "ddwd");
     let snapshot = await getDoc(docRef);
 
-    qlUserData.map(
-      async (queue) => (
-        (docRef = doc(db, "acadSummaryreport", queue.id)),
-        (snapshot = await getDoc(docRef)),
-        await addDoc(userCollectionArchieve, {
-          status: snapshot.data().status,
-          name: snapshot.data().name,
-          transaction: snapshot.data().transaction,
-          email: snapshot.data().email,
-          studentNumber: snapshot.data().studentNumber,
-          address: snapshot.data().address,
-          contact: snapshot.data().contact,
-          userType: snapshot.data().userType,
-          yearSection: snapshot.data().yearSection,
-          ticket: snapshot.data().ticket,
-          timestamp: snapshot.data().timestamp,
-          date: snapshot.data().date,
-        }),
-        await deleteDoc(doc(db, "acadSummaryreport", queue.id))
-      )
-    );
+    if(searchData.length === 0){
+      qlUserData.map(
+        async (queue) => (
+          (docRef = doc(db, "acadSummaryreport", queue.id)),
+          (snapshot = await getDoc(docRef)),
+          await addDoc(userCollectionArchieve, {
+            status: snapshot.data().status,
+            name: snapshot.data().name,
+            transaction: snapshot.data().transaction,
+            email: snapshot.data().email,
+            studentNumber: snapshot.data().studentNumber,
+            address: snapshot.data().address,
+            contact: snapshot.data().contact,
+            userType: snapshot.data().userType,
+            yearSection: snapshot.data().yearSection,
+            ticket: snapshot.data().ticket,
+            timestamp: snapshot.data().timestamp,
+            date: snapshot.data().date,
+          }),
+          await deleteDoc(doc(db, "acadSummaryreport", queue.id))
+        )
+      );
+    }
+    else{
+      searchData.map(
+        async (queue) => (
+          (docRef = doc(db, "acadSummaryreport", queue.id)),
+          (snapshot = await getDoc(docRef)),
+          await addDoc(userCollectionArchieve, {
+            status: snapshot.data().status,
+            name: snapshot.data().name,
+            transaction: snapshot.data().transaction,
+            email: snapshot.data().email,
+            studentNumber: snapshot.data().studentNumber,
+            address: snapshot.data().address,
+            contact: snapshot.data().contact,
+            userType: snapshot.data().userType,
+            yearSection: snapshot.data().yearSection,
+            ticket: snapshot.data().ticket,
+            timestamp: snapshot.data().timestamp,
+            date: snapshot.data().date,
+          }),
+          await deleteDoc(doc(db, "acadSummaryreport", queue.id))
+        )
+      );
+    }
   };
 
   return (
