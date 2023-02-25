@@ -38,6 +38,7 @@ import {
   addDoc,
   serverTimestamp,
 } from "firebase/firestore";
+import { Stack } from "@mui/system";
 
 // table header syle
 const styleTableHead = createTheme({
@@ -160,9 +161,17 @@ const Archive = () => {
 
   const deleteAllPermanentData = async () => {
     if (window.confirm("Are you sure you want to permanent delete all")) {
-      userdata.map(
-        async (queue) => await deleteDoc(doc(db, "regArchieve", queue.id))
-      );
+      if(searchData.length === 0){
+        userdata.map(
+          async (queue) => await deleteDoc(doc(db, "regArchieve", queue.id))
+        );
+      }
+      else{
+        searchData.map(
+          async (queue) => await deleteDoc(doc(db, "regArchieve", queue.id))
+        );
+      }
+      
     }
   };
 
@@ -188,6 +197,58 @@ const Archive = () => {
     );
     return unsub;
   };
+  const restoreAll = async () => {
+    let docRef = doc(db, "regArchieve", "ddwd");
+    let snapshot = await getDoc(docRef);
+
+    if(searchData.length === 0){
+      userdata.map(
+        async (queue) => (
+          (docRef = doc(db, "regArchieve", queue.id)),
+          (snapshot = await getDoc(docRef)),
+          await addDoc(userCollectionSummaryreport, {
+            status: snapshot.data().status,
+            name: snapshot.data().name,
+            transaction: snapshot.data().transaction,
+            email: snapshot.data().email,
+            studentNumber: snapshot.data().studentNumber,
+            address: snapshot.data().address,
+            contact: snapshot.data().contact,
+            userType: snapshot.data().userType,
+            yearSection: snapshot.data().yearSection,
+            ticket: snapshot.data().ticket,
+            timestamp: snapshot.data().timestamp,
+            date: snapshot.data().date,
+          }),
+          await deleteDoc(doc(db, "regArchieve", queue.id))
+        )
+      );
+    }
+    else{
+      searchData.map(
+        async (queue) => (
+          (docRef = doc(db, "regArchieve", queue.id)),
+          (snapshot = await getDoc(docRef)),
+          await addDoc(userCollectionSummaryreport, {
+            status: snapshot.data().status,
+            name: snapshot.data().name,
+            transaction: snapshot.data().transaction,
+            email: snapshot.data().email,
+            studentNumber: snapshot.data().studentNumber,
+            address: snapshot.data().address,
+            contact: snapshot.data().contact,
+            userType: snapshot.data().userType,
+            yearSection: snapshot.data().yearSection,
+            ticket: snapshot.data().ticket,
+            timestamp: snapshot.data().timestamp,
+            date: snapshot.data().date,
+          }),
+          await deleteDoc(doc(db, "regArchieve", queue.id))
+        )
+      );
+    }
+  };
+
   return (
     <>
       <ThemeProvider theme={Theme}>
@@ -257,16 +318,25 @@ const Archive = () => {
           />
         </Box>
         <Box mx={5} sx={{ display: "flex", justifyContent: "end" }}>
+          <Stack spacing={1.5} direction="row">
           <Button
-            onClick={deleteAllPermanentData}
-            variant="outlined"
-            color="pupMaroon"
-          >
-            Delete All
-          </Button>
-          <Button onClick={viewAll} variant="outlined" color="pupMaroon">
-            Refresh
-          </Button>
+              onClick={restoreAll}
+              variant="outlined"
+              color="pupMaroon"
+            >
+              Restore All
+            </Button>
+            <Button
+              onClick={deleteAllPermanentData}
+              variant="outlined"
+              color="pupMaroon"
+            >
+              Delete All
+            </Button>
+            <Button onClick={viewAll} variant="outlined" color="pupMaroon">
+              Refresh
+            </Button>
+          </Stack>
         </Box>
         <Box px={5} py={2} mb={5}>
           <TableContainer

@@ -202,7 +202,7 @@ const Archive = () => {
     let snapshot = await getDoc(docRef);
 
     if(searchData.length === 0){
-      qlUserData.map(
+      userdata.map(
         async (queue) => (
           (docRef = doc(db, "acadArchieve", queue.id)),
           (snapshot = await getDoc(docRef)),
