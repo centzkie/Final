@@ -196,10 +196,16 @@ const AdminQueueline = () => {
       >
         Queue Line
       </Typography>
-      <TableContainer component={Paper}>
+      <TableContainer
+        component={Paper}
+        sx={{
+          height: "343px",
+          margin: "auto",
+        }}
+      >
         <Table>
           <ThemeProvider theme={styleTableHead}>
-            <TableHead sx={{ position: "sticky", top: 0, zIndex: 1 }}>
+            <TableHead sx={{ position: "sticky", top: 0, zIndex: 10 }}>
               <TableRow>
                 <TableCell
                   sx={{

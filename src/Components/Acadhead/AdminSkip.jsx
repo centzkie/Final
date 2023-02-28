@@ -188,7 +188,13 @@ const AdminSkip = () => {
       >
         Skip
       </Typography>
-      <TableContainer component={Paper}>
+      <TableContainer
+        component={Paper}
+        sx={{
+          height: "343px",
+          margin: "auto",
+        }}
+      >
         <Table sx={{ tableLayout: "auto", height: "maxContent" }}>
           <ThemeProvider theme={styleTableHead}>
             <TableHead sx={{ position: "sticky", top: 0, zIndex: 1 }}>

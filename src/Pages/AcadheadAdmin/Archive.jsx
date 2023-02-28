@@ -161,17 +161,15 @@ const Archive = () => {
 
   const deleteAllPermanentData = async () => {
     if (window.confirm("Are you sure you want to permanent delete all")) {
-      if(searchData.length === 0){
+      if (searchData.length === 0) {
         userdata.map(
           async (queue) => await deleteDoc(doc(db, "acadArchieve", queue.id))
         );
-      }
-      else{
+      } else {
         searchData.map(
           async (queue) => await deleteDoc(doc(db, "acadArchieve", queue.id))
         );
       }
-      
     }
   };
 
@@ -201,7 +199,7 @@ const Archive = () => {
     let docRef = doc(db, "acadArchieve", "ddwd");
     let snapshot = await getDoc(docRef);
 
-    if(searchData.length === 0){
+    if (searchData.length === 0) {
       userdata.map(
         async (queue) => (
           (docRef = doc(db, "acadArchieve", queue.id)),
@@ -223,8 +221,7 @@ const Archive = () => {
           await deleteDoc(doc(db, "acadArchieve", queue.id))
         )
       );
-    }
-    else{
+    } else {
       searchData.map(
         async (queue) => (
           (docRef = doc(db, "acadArchieve", queue.id)),
@@ -319,11 +316,7 @@ const Archive = () => {
         </Box>
         <Box mx={5} sx={{ display: "flex", justifyContent: "end" }}>
           <Stack spacing={1.5} direction="row">
-          <Button
-              onClick={restoreAll}
-              variant="outlined"
-              color="pupMaroon"
-            >
+            <Button onClick={restoreAll} variant="outlined" color="pupMaroon">
               Restore All
             </Button>
             <Button
@@ -344,14 +337,11 @@ const Archive = () => {
             sx={{
               height: "425px",
               margin: "auto",
-              "&::-webkit-scrollbar": {
-                width: "2px",
-              },
             }}
           >
             <Table sx={{ tableLayout: "auto", height: "maxContent" }}>
               <ThemeProvider theme={styleTableHead}>
-                <TableHead sx={{ position: "sticky", top: 0, zIndex: 1 }}>
+                <TableHead sx={{ position: "sticky", top: 0, zIndex: 10 }}>
                   <TableRow>
                     <TableCell>Restore</TableCell>
                     <TableCell>Delete</TableCell>

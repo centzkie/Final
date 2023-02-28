@@ -18,6 +18,7 @@ import {
   TextField,
   InputAdornment,
   IconButton,
+  Stack,
 } from "@mui/material";
 import { SearchOutlined, Delete } from "@mui/icons-material";
 import img from "../../Img/seal.png";
@@ -99,7 +100,9 @@ const Report = () => {
   const [isDisable, setIsDisable] = useState(true);
   const current = new Date();
   const [date, setDate] = useState(
-    `${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()}-${current.toLocaleTimeString("en-US")}`
+    `${current.getDate()}/${
+      current.getMonth() + 1
+    }/${current.getFullYear()}-${current.toLocaleTimeString("en-US")}`
   );
   const userCollectionArchieve = collection(db, "acadArchieve");
 
@@ -167,37 +170,35 @@ const Report = () => {
     setTableMap(true);
   };
   const deleteSingleData = async (id) => {
-    if(window.confirm("Are you sure you want to delete this transaction?")){
+    if (window.confirm("Are you sure you want to delete this transaction?")) {
       const docRef = doc(db, "acadSummaryreport", id);
-    const snapshot = await getDoc(docRef);
-    await addDoc(userCollectionArchieve, {
-      status: snapshot.data().status,
-      name: snapshot.data().name,
-      transaction: snapshot.data().transaction,
-      email: snapshot.data().email,
-      studentNumber: snapshot.data().studentNumber,
-      address: snapshot.data().address,
-      contact: snapshot.data().contact,
-      userType: snapshot.data().userType,
-      yearSection: snapshot.data().yearSection,
-      ticket: snapshot.data().ticket,
-      timestamp: snapshot.data().timestamp,
-      date: snapshot.data().date,
-    });
+      const snapshot = await getDoc(docRef);
+      await addDoc(userCollectionArchieve, {
+        status: snapshot.data().status,
+        name: snapshot.data().name,
+        transaction: snapshot.data().transaction,
+        email: snapshot.data().email,
+        studentNumber: snapshot.data().studentNumber,
+        address: snapshot.data().address,
+        contact: snapshot.data().contact,
+        userType: snapshot.data().userType,
+        yearSection: snapshot.data().yearSection,
+        ticket: snapshot.data().ticket,
+        timestamp: snapshot.data().timestamp,
+        date: snapshot.data().date,
+      });
 
-    const userDoc = doc(db, "acadSummaryreport", id);
-    await deleteDoc(userDoc);
+      const userDoc = doc(db, "acadSummaryreport", id);
+      await deleteDoc(userDoc);
     }
-
   };
 
   const deleteAll = () => {
-    if(qlUserData.length>0){
+    if (qlUserData.length > 0) {
       if (window.confirm("Are you sure you want to delete ?")) {
         moveAllData();
       }
-    }
-    else{
+    } else {
       alert("Delete failed: No data filtered");
     }
   };
@@ -206,7 +207,7 @@ const Report = () => {
     let docRef = doc(db, "acadSummaryreport", "ddwd");
     let snapshot = await getDoc(docRef);
 
-    if(searchData.length === 0){
+    if (searchData.length === 0) {
       qlUserData.map(
         async (queue) => (
           (docRef = doc(db, "acadSummaryreport", queue.id)),
@@ -228,8 +229,7 @@ const Report = () => {
           await deleteDoc(doc(db, "acadSummaryreport", queue.id))
         )
       );
-    }
-    else{
+    } else {
       searchData.map(
         async (queue) => (
           (docRef = doc(db, "acadSummaryreport", queue.id)),
@@ -315,20 +315,22 @@ const Report = () => {
           />
         </Box>
         <Box mx={5} sx={{ display: "flex", justifyContent: "end" }}>
-          <Button
-            disable={isDisable}
-            onClick={deleteAll}
-            variant="outlined"
-            color="pupMaroon"
-          >
-            Delete All
-          </Button>
-          <Button onClick={viewAll} variant="outlined" color="pupMaroon">
-            Refresh
-          </Button>
-          <Button variant="outlined" color="pupMaroon" onClick={handlePrint}>
-            Print
-          </Button>
+          <Stack spacing={1.5} direction="row">
+            <Button
+              disable={isDisable}
+              onClick={deleteAll}
+              variant="outlined"
+              color="pupMaroon"
+            >
+              Delete All
+            </Button>
+            <Button onClick={viewAll} variant="outlined" color="pupMaroon">
+              Refresh
+            </Button>
+            <Button variant="outlined" color="pupMaroon" onClick={handlePrint}>
+              Print
+            </Button>
+          </Stack>
         </Box>
         <Box px={5} py={2} mb={5}>
           <TableContainer
@@ -336,9 +338,6 @@ const Report = () => {
             sx={{
               height: "425px",
               margin: "auto",
-              "&::-webkit-scrollbar": {
-                width: "2px",
-              },
             }}
           >
             <Table
@@ -346,9 +345,18 @@ const Report = () => {
               ref={printRef}
             >
               <ThemeProvider theme={styleTableHead}>
-                <TableHead>
+                <TableHead sx={{ position: "sticky", top: 0, zIndex: "10" }}>
                   <TableRow>
-                    <TableCell>Action</TableCell>
+                    <TableCell
+                      sx={{
+                        position: "sticky",
+                        left: 0,
+                        zIndex: "1",
+                        backgroundColor: "#880000",
+                      }}
+                    >
+                      Action
+                    </TableCell>
                     <TableCell>Status</TableCell>
                     <TableCell>Date</TableCell>
                     <TableCell>Ticket</TableCell>
@@ -370,7 +378,14 @@ const Report = () => {
                     <TableBody>
                       {qlUserData.map((queue, index) => (
                         <TableRow key={index}>
-                          <TableCell>
+                          <TableCell
+                            sx={{
+                              position: "sticky",
+                              left: 0,
+                              zIndex: "1",
+                              backgroundColor: "#ffffff",
+                            }}
+                          >
                             <IconButton>
                               <Delete
                                 onClick={() => {
@@ -378,15 +393,6 @@ const Report = () => {
                                 }}
                               />
                             </IconButton>
-                            {/* <Button
-                              variant="contained"
-                              color="success"
-                              onClick={() => {
-                                deleteSingleData(queue.id);
-                              }}
-                            >
-                              Delete
-                            </Button> */}
                           </TableCell>
                           <TableCell>{queue.status}</TableCell>
                           <TableCell>{queue.date}</TableCell>
