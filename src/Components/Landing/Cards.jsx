@@ -25,7 +25,7 @@ const Cards = () => {
   useEffect(() => {
     const checkTime = () => {
       let currentTime = moment().tz(timezone);
-      let startTime = moment.tz("20:27", "HH:mm", timezone);
+      let startTime = moment.tz("08:00", "HH:mm", timezone);
       let endTime = moment.tz("24:00", "HH:mm", timezone);
 
       if (currentTime.isBetween(startTime, endTime)) {

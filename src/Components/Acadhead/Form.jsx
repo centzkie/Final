@@ -46,11 +46,6 @@ import { sm, transactionsAcad, yrSN, yrSections } from "../Selectfunctions";
 import { async } from "@firebase/util";
 import { red } from "@mui/material/colors";
 
-// Function for generate random number
-function randomNumberInRange(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 const Form = () => {
   const [address, setAddress] = useState("");
   const [contact, setContact] = useState("");
@@ -66,11 +61,12 @@ const Form = () => {
   const navigate = useNavigate();
   const userCollection1 = collection(db, "acadQueuing");
   const userCollection2 = collection(db, "acadPriority");
+  const userCollection3 = collection(db, "acadTicket");
   const [error, setError] = useState(false);
   const [emailError, setEmailError] = useState('')
   let fullStudentNumber = snYear + "-" + studentNumber + "-" + branch;
   let [countData,setCount] = useState();
-  let k = 0;
+  let sampleID = 0;
 
   const timezone = "Asia/Manila";
 
@@ -78,8 +74,8 @@ const Form = () => {
   useEffect(() => {
     const checkTime = () => {
       let currentTime = moment().tz(timezone);
-      let startTime = moment.tz("24:00", "HH:mm a", timezone);
-      let endTime = moment.tz("17:00", "HH:mm a", timezone);
+      let startTime = moment.tz("08:00", "HH:mm a", timezone);
+      let endTime = moment.tz("24:00", "HH:mm a", timezone);
 
       if (currentTime.isBetween(startTime, endTime)) {
         sessionStorage.setItem("Auth", "true");
@@ -94,7 +90,7 @@ const Form = () => {
 
   useEffect(() => {
     const checkTime = async() => {
-      count();
+      //count();
     };
     
     const intervalId = setInterval(checkTime, 5000);
@@ -147,6 +143,7 @@ const Form = () => {
     } else {
       setEmailError(false)
     }
+    console.log(emailError);
   }
 
   const numOnlyContact = (e) => {
@@ -175,7 +172,6 @@ const Form = () => {
   };
 
   const handleErr =() =>{
-    console.log(emailError);
     if (name.length > 0 && transaction.length > 0 && selectedForm.length > 0 &&
       selectedUser.length > 0){
         if(selectedUser === "Student"){
@@ -190,6 +186,13 @@ const Form = () => {
               }else{
                 setError(true);
                 alert("Please check your name");
+              }
+
+              if(emailError){
+                setError(true);
+              }
+              else{
+                setError(false);
               }
               
           }
@@ -241,8 +244,9 @@ const Form = () => {
     if (address.length === 0) {
       subaddress = "N/A";
     }
-    if (selectedForm === "Normal") {
+    if (selectedForm === "Regular") {
       if (window.confirm("Are you sure you wish to add this transaction ?")) {
+        generateTicket();
         await addDoc(userCollection1, {
           name: name,
           transaction: transaction,
@@ -259,6 +263,7 @@ const Form = () => {
       }
     } else {
       if (window.confirm("Are you sure you wish to add this transaction ?")) {
+        generateTicket();
         await addDoc(userCollection2, {
           name: name,
           transaction: transaction,
@@ -441,107 +446,28 @@ const Form = () => {
   };
 
   const generateTicket=async()=>{
-    if (selectedForm === "Priority") {
-      window.ticket = "P" + randomNumberInRange(99, 499);
-    } else if (selectedForm === "Normal") {
-      window.ticket = "N" + randomNumberInRange(99, 499);
+
+    if(selectedForm === "Priority"){
+      const coll = collection(db, "acadTicket");
+      const q = query(coll, where("type", "==", "priority"));
+      const snapshot = await getCountFromServer(q);
+      window.ticket = "PA00" + (snapshot.data().count + 1);
+      await addDoc(userCollection3, {
+        type: "priority",})
     }
-
-    let z = 0;
-    // Check if Ticket exist on Acad Que Table
-    let checkTicket = query(
-      collection(db, "acadQueuing"),
-      where("ticket", "==", window.ticket)
-    );
-    let querySnapshotTicket = await getDocs(checkTicket);
-    querySnapshotTicket.forEach(() => {
-      z++;
-    });
-
-    // Check if Ticket exist on Acad Now Serving Table
-    checkTicket = query(
-      collection(db, "acadNowserving"),
-      where("ticket", "==", window.ticket)
-    );
-    querySnapshotTicket = await getDocs(checkTicket);
-    querySnapshotTicket.forEach(() => {
-      z++;
-    });
-
-    // Check if Ticket exist on Acad Skip Table
-    checkTicket = query(
-      collection(db, "acadSkip"),
-      where("ticket", "==", window.ticket)
-    );
-    querySnapshotTicket = await getDocs(checkTicket);
-    querySnapshotTicket.forEach(() => {
-      z++;
-    });
-
-    // Check if Ticket exist on Priority Table
-    checkTicket = query(
-      collection(db, "acadPriority"),
-      where("ticket", "==", window.ticket)
-    );
-    querySnapshotTicket = await getDocs(checkTicket);
-    querySnapshotTicket.forEach(() => {
-      z++;
-    });
-
-    // IF exist then random again until generate unique ticket id
-    if (z > 0) {
-      let ctr = 0;
-      do {
-        ctr = 0;
-        if (selectedForm === "Priority") {
-          window.ticket = "P" + randomNumberInRange(99, 499);
-        } else if (selectedForm === "Normal") {
-          window.ticket = "N" + randomNumberInRange(99, 499);
-        }
-
-        let getNum = query(
-          collection(db, "acadQueuing"),
-          where("ticket", "==", window.ticket)
-        );
-        let querySnapshotNum = await getDocs(getNum);
-        querySnapshotNum.forEach(() => {
-          ctr++;
-        });
-
-        getNum = query(
-          collection(db, "acadNowserving"),
-          where("ticket", "==", window.ticket)
-        );
-        querySnapshotNum = await getDocs(getNum);
-        querySnapshotNum.forEach(() => {
-          ctr++;
-        });
-
-        getNum = query(
-          collection(db, "acadSkip"),
-          where("ticket", "==", window.ticket)
-        );
-        querySnapshotNum = await getDocs(getNum);
-        querySnapshotNum.forEach(() => {
-          ctr++;
-        });
-
-        getNum = query(
-          collection(db, "acadPriority"),
-          where("ticket", "==", window.ticket)
-        );
-        querySnapshotNum = await getDocs(getNum);
-        querySnapshotNum.forEach(() => {
-          ctr++;
-        });
-      } while (ctr > 0);
+    else{
+      const coll = collection(db, "acadTicket");
+      const q = query(coll, where("type", "==", "regular"));
+      const snapshot = await getCountFromServer(q);
+      window.ticket = "RA00" + (snapshot.data().count + 1);
+      await addDoc(userCollection3, { 
+        type: "regular",})
     }
   }
 
   // Validating for creating user
   const creatingUser = async () => {
     checkExistingOnQue();
-    generateTicket();
   };
 
   return (
@@ -667,9 +593,9 @@ const Form = () => {
                       onChange={(event) => setSelectedForm(event.target.value)}
                     >
                       <FormControlLabel
-                        value="Normal"
+                        value="Regular"
                         control={<Radio color="pupMaroon" />}
-                        label="Normal"
+                        label="Regular"
                       />
                       <FormControlLabel
                         value="Priority"

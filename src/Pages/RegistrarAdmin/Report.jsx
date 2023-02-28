@@ -138,6 +138,7 @@ const Report = () => {
     );
     return unsub;
   };
+
   const tableQuerySearch = async () => {
     checkPoint();
     let j = 0;
@@ -166,6 +167,7 @@ const Report = () => {
   const viewAll = () => {
     setTableMap(true);
   };
+  
   const deleteSingleData = async (id) => {
     const docRef = doc(db, "regSummaryreport", id);
     const snapshot = await getDoc(docRef);

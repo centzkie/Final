@@ -48,6 +48,10 @@ const GenerateAcad = () => {
     setAheadTicket(j + k + l - 1);
     return aheadTicket;
   };
+  
+  useEffect(() => {
+    count();
+  });
 
   const navigate = useNavigate();
   const landing = () => {

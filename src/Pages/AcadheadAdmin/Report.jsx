@@ -167,7 +167,8 @@ const Report = () => {
     setTableMap(true);
   };
   const deleteSingleData = async (id) => {
-    const docRef = doc(db, "acadSummaryreport", id);
+    if(window.confirm("Are you sure you want to delete this transaction?")){
+      const docRef = doc(db, "acadSummaryreport", id);
     const snapshot = await getDoc(docRef);
     await addDoc(userCollectionArchieve, {
       status: snapshot.data().status,
@@ -186,6 +187,8 @@ const Report = () => {
 
     const userDoc = doc(db, "acadSummaryreport", id);
     await deleteDoc(userDoc);
+    }
+
   };
 
   const deleteAll = () => {
