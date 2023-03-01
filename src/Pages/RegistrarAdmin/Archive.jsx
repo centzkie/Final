@@ -161,17 +161,15 @@ const Archive = () => {
 
   const deleteAllPermanentData = async () => {
     if (window.confirm("Are you sure you want to permanent delete all")) {
-      if(searchData.length === 0){
+      if (searchData.length === 0) {
         userdata.map(
           async (queue) => await deleteDoc(doc(db, "regArchieve", queue.id))
         );
-      }
-      else{
+      } else {
         searchData.map(
           async (queue) => await deleteDoc(doc(db, "regArchieve", queue.id))
         );
       }
-      
     }
   };
 
@@ -201,7 +199,7 @@ const Archive = () => {
     let docRef = doc(db, "regArchieve", "ddwd");
     let snapshot = await getDoc(docRef);
 
-    if(searchData.length === 0){
+    if (searchData.length === 0) {
       userdata.map(
         async (queue) => (
           (docRef = doc(db, "regArchieve", queue.id)),
@@ -223,8 +221,7 @@ const Archive = () => {
           await deleteDoc(doc(db, "regArchieve", queue.id))
         )
       );
-    }
-    else{
+    } else {
       searchData.map(
         async (queue) => (
           (docRef = doc(db, "regArchieve", queue.id)),
@@ -319,11 +316,7 @@ const Archive = () => {
         </Box>
         <Box mx={5} sx={{ display: "flex", justifyContent: "end" }}>
           <Stack spacing={1.5} direction="row">
-          <Button
-              onClick={restoreAll}
-              variant="outlined"
-              color="pupMaroon"
-            >
+            <Button onClick={restoreAll} variant="outlined" color="pupMaroon">
               Restore All
             </Button>
             <Button
@@ -344,17 +337,22 @@ const Archive = () => {
             sx={{
               height: "425px",
               margin: "auto",
-              "&::-webkit-scrollbar": {
-                width: "2px",
-              },
             }}
           >
             <Table sx={{ tableLayout: "auto", height: "maxContent" }}>
               <ThemeProvider theme={styleTableHead}>
                 <TableHead sx={{ position: "sticky", top: 0, zIndex: 1 }}>
                   <TableRow>
-                    <TableCell>Restore</TableCell>
-                    <TableCell>Delete</TableCell>
+                    <TableCell
+                      sx={{
+                        position: "sticky",
+                        left: 0,
+                        zIndex: 5,
+                        backgroundColor: "#880000",
+                      }}
+                    >
+                      Action
+                    </TableCell>
                     <TableCell>Status</TableCell>
                     <TableCell>Date</TableCell>
                     <TableCell>Ticket</TableCell>
@@ -376,25 +374,39 @@ const Archive = () => {
                     <TableBody>
                       {userdata.map((queue, index) => (
                         <TableRow key={index}>
-                          <TableCell>
-                            <IconButton
-                              onClick={() => {
-                                deleteSingleData(queue.id);
-                              }}
-                              sx={{ color: "#00FF00" }}
-                            >
-                              <Restore />
-                            </IconButton>
-                          </TableCell>
-                          <TableCell>
-                            <IconButton
-                              onClick={() => {
-                                deletePermanentSingleData(queue.id);
-                              }}
-                              sx={{ color: "#FF0000" }}
-                            >
-                              <Delete />
-                            </IconButton>
+                          <TableCell
+                            sx={{
+                              position: "sticky",
+                              left: 0,
+                              zIndex: 3,
+                              backgroundColor: "#ffffff",
+                            }}
+                          >
+                            <Stack spacing={1.5} direction="row">
+                              <Typography>
+                                <Tooltip title="Restore">
+                                  <IconButton
+                                    onClick={() => {
+                                      deleteSingleData(queue.id);
+                                    }}
+                                    sx={{ color: "#00FF00" }}
+                                  >
+                                    <Restore />
+                                  </IconButton>
+                                </Tooltip>
+                              </Typography>
+                              <Typography>
+                                <Tooltip title="delete">
+                                  <IconButton
+                                    onClick={() => {
+                                      deletePermanentSingleData(queue.id);
+                                    }}
+                                  >
+                                    <Delete color="red" />
+                                  </IconButton>
+                                </Tooltip>
+                              </Typography>
+                            </Stack>
                           </TableCell>
                           <TableCell>{queue.status}</TableCell>
                           <TableCell>{queue.date}</TableCell>

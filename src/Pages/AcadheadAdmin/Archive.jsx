@@ -83,6 +83,9 @@ const styleTableBody = createTheme({
         root: {
           whiteSpace: "nowrap",
           textAlign: "center",
+          maxWidth: "200px",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
         },
       },
     },
@@ -343,8 +346,17 @@ const Archive = () => {
               <ThemeProvider theme={styleTableHead}>
                 <TableHead sx={{ position: "sticky", top: 0, zIndex: 10 }}>
                   <TableRow>
-                    <TableCell>Restore</TableCell>
-                    <TableCell>Delete</TableCell>
+                    <TableCell
+                      sx={{
+                        position: "sticky",
+                        left: 0,
+                        zIndex: 5,
+                        backgroundColor: "#880000",
+                      }}
+                    >
+                      Action
+                    </TableCell>
+
                     <TableCell>Status</TableCell>
                     <TableCell>Date</TableCell>
                     <TableCell>Ticket</TableCell>
@@ -366,25 +378,39 @@ const Archive = () => {
                     <TableBody>
                       {userdata.map((queue, index) => (
                         <TableRow key={index}>
-                          <TableCell>
-                            <IconButton
-                              onClick={() => {
-                                deleteSingleData(queue.id);
-                              }}
-                              sx={{ color: "#00FF00" }}
-                            >
-                              <Restore />
-                            </IconButton>
-                          </TableCell>
-                          <TableCell>
-                            <IconButton
-                              onClick={() => {
-                                deletePermanentSingleData(queue.id);
-                              }}
-                              sx={{ color: "#FF0000" }}
-                            >
-                              <Delete />
-                            </IconButton>
+                          <TableCell
+                            sx={{
+                              position: "sticky",
+                              left: 0,
+                              zIndex: 3,
+                              backgroundColor: "#ffffff",
+                            }}
+                          >
+                            <Stack spacing={1.5} direction="row">
+                              <Typography>
+                                <Tooltip title="Restore">
+                                  <IconButton
+                                    onClick={() => {
+                                      deleteSingleData(queue.id);
+                                    }}
+                                    sx={{ color: "#00FF00" }}
+                                  >
+                                    <Restore />
+                                  </IconButton>
+                                </Tooltip>
+                              </Typography>
+                              <Typography>
+                                <Tooltip title="delete">
+                                  <IconButton
+                                    onClick={() => {
+                                      deletePermanentSingleData(queue.id);
+                                    }}
+                                  >
+                                    <Delete color="red" />
+                                  </IconButton>
+                                </Tooltip>
+                              </Typography>
+                            </Stack>
                           </TableCell>
                           <TableCell>{queue.status}</TableCell>
                           <TableCell>{queue.date}</TableCell>
@@ -415,23 +441,39 @@ const Archive = () => {
                     <TableBody>
                       {searchData.map((queue, index) => (
                         <TableRow key={index}>
-                          <TableCell>
-                            <IconButton
-                              onClick={tableQuerySearch}
-                              sx={{ color: "#00FF00" }}
-                            >
-                              <Restore />
-                            </IconButton>
-                          </TableCell>
-                          <TableCell>
-                            <IconButton
-                              onClick={() => {
-                                deletePermanentSingleData(queue.id);
-                              }}
-                              sx={{ color: "#FF0000" }}
-                            >
-                              <Delete />
-                            </IconButton>
+                          <TableCell
+                            sx={{
+                              position: "sticky",
+                              left: 0,
+                              zIndex: 3,
+                              backgroundColor: "#ffffff",
+                            }}
+                          >
+                            <Stack spacing={1.5} direction="row">
+                              <Typography>
+                                <Tooltip title="Restore">
+                                  <IconButton
+                                    onClick={() => {
+                                      deleteSingleData(queue.id);
+                                    }}
+                                    sx={{ color: "#00FF00" }}
+                                  >
+                                    <Restore />
+                                  </IconButton>
+                                </Tooltip>
+                              </Typography>
+                              <Typography>
+                                <Tooltip title="delete">
+                                  <IconButton
+                                    onClick={() => {
+                                      deletePermanentSingleData(queue.id);
+                                    }}
+                                  >
+                                    <Delete color="red" />
+                                  </IconButton>
+                                </Tooltip>
+                              </Typography>
+                            </Stack>
                           </TableCell>
                           <TableCell>{queue.status}</TableCell>
                           <TableCell>{queue.date}</TableCell>

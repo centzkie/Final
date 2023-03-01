@@ -693,6 +693,7 @@ const Form = () => {
                               <InputLabel
                                 id="demo-simple-select-label"
                                 color="pupMaroon"
+                                required
                               >
                                 SN-Year
                               </InputLabel>
@@ -738,6 +739,7 @@ const Form = () => {
                               <InputLabel
                                 id="demo-simple-select-label"
                                 color="pupMaroon"
+                                required
                               >
                                 Branch
                               </InputLabel>
@@ -778,7 +780,6 @@ const Form = () => {
                               Year & Section
                             </InputLabel>
                             <Select
-                              required
                               labelId="demo-simple-select-label"
                               id="demo-simple-select"
                               value={yearSection}

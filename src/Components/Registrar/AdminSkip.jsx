@@ -185,18 +185,24 @@ const AdminSkip = () => {
       <TableContainer
         component={Paper}
         sx={{
-          height: "320px",
+          height: "343px",
           margin: "auto",
-          "&::-webkit-scrollbar": {
-            width: "2px",
-          },
         }}
       >
         <Table sx={{ tableLayout: "auto", height: "maxContent" }}>
           <ThemeProvider theme={styleTableHead}>
             <TableHead sx={{ position: "sticky", top: 0 }}>
               <TableRow>
-                <TableCell>Actions</TableCell>
+                <TableCell
+                  sx={{
+                    position: "sticky",
+                    left: "0",
+                    zIndex: "5",
+                    backgroundColor: "#880000",
+                  }}
+                >
+                  Actions
+                </TableCell>
                 <TableCell>Ticket</TableCell>
                 <TableCell>Transaction</TableCell>
                 <TableCell>Name</TableCell>
@@ -214,7 +220,15 @@ const AdminSkip = () => {
             <TableBody>
               {userData.map((queue, index) => (
                 <TableRow key={index}>
-                  <TableCell sx={{ minWidth: "300px" }}>
+                  <TableCell
+                    sx={{
+                      minWidth: "300px",
+                      position: "sticky",
+                      left: "0",
+                      zIndex: "5",
+                      backgroundColor: "#ffffff",
+                    }}
+                  >
                     <Stack spacing={1.5} direction="row">
                       <Stack>
                         <Button

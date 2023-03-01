@@ -391,6 +391,7 @@ const Report = () => {
                                 onClick={() => {
                                   deleteSingleData(queue.id);
                                 }}
+                                color="red"
                               />
                             </IconButton>
                           </TableCell>
@@ -400,16 +401,7 @@ const Report = () => {
                             {queue.ticket}
                           </TableCell>
                           <Tooltip title={queue.transaction} arrow>
-                            <TableCell
-                              sx={{
-                                maxWidth: "200px",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                whiteSpace: "nowrap",
-                              }}
-                            >
-                              {queue.transaction}
-                            </TableCell>
+                            <TableCell>{queue.transaction}</TableCell>
                           </Tooltip>
 
                           <TableCell>{queue.name}</TableCell>
