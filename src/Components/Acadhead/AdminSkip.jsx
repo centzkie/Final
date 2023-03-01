@@ -81,10 +81,18 @@ const styleTableBody = createTheme({
 });
 const AdminSkip = () => {
   const [userData, setUserData] = useState([]);
+  const [qlCurrentPage, setQlCurrentPost] = useState(1);
   const userCollectionHistory = collection(db, "acadSummaryreport");
   const userCollectionNowserving = collection(db, "acadNowserving");
   const current = new Date();
   const [isDisable, setIsDisable] = useState(false);
+
+  const QlPostPerPage = 5;
+  let pages = [];
+
+  const lastPostIndex = qlCurrentPage * QlPostPerPage;
+  const firstPostIndex = lastPostIndex - QlPostPerPage;
+  const currentPost = userData.slice(firstPostIndex, lastPostIndex);
 
   const [date, setDate] = useState(
     `${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()}`
@@ -183,18 +191,24 @@ const AdminSkip = () => {
       <TableContainer
         component={Paper}
         sx={{
-          height: "320px",
+          height: "343px",
           margin: "auto",
-          "&::-webkit-scrollbar": {
-            width: "2px",
-          },
         }}
       >
         <Table sx={{ tableLayout: "auto", height: "maxContent" }}>
           <ThemeProvider theme={styleTableHead}>
             <TableHead sx={{ position: "sticky", top: 0, zIndex: 1 }}>
               <TableRow>
-                <TableCell>Actions</TableCell>
+                <TableCell
+                  sx={{
+                    position: "sticky",
+                    left: "0",
+                    zIndex: "5",
+                    backgroundColor: "#880000",
+                  }}
+                >
+                  Actions
+                </TableCell>
                 <TableCell>Ticket</TableCell>
                 <TableCell>Transaction</TableCell>
                 <TableCell>Name</TableCell>
@@ -210,9 +224,17 @@ const AdminSkip = () => {
           <ThemeProvider theme={styleTableBody}>
             {/* Table Body */}
             <TableBody>
-              {userData.map((queue, index) => (
+              {currentPost.map((queue, index) => (
                 <TableRow key={index}>
-                  <TableCell sx={{ minWidth: "300px" }}>
+                  <TableCell
+                    sx={{
+                      minWidth: "300px",
+                      position: "sticky",
+                      left: "0",
+                      zIndex: "5",
+                      backgroundColor: "#ffffff",
+                    }}
+                  >
                     <Stack spacing={1.5} direction="row">
                       <Stack>
                         <Button

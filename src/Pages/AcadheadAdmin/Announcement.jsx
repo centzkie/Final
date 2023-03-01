@@ -119,7 +119,7 @@ const Announcement = () => {
   // Announcement Table
   const tableQueryAnnouncement = async () => {
     const acadQueueCollection = collection(db, "acadAnnouncement");
-    const q = query(acadQueueCollection, orderBy("timestamp", "asc"));
+    const q = query(acadQueueCollection, orderBy("timestamp", "desc"));
     const unsub = onSnapshot(q, (snapshot) =>
       setUserData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     );

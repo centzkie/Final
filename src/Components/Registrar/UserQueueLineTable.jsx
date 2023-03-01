@@ -15,12 +15,12 @@ import { db } from "../../firebase-config";
 const UserQueueLineTable = () => {
   const [userData, setUserData] = useState([]);
   const [userData1, setUserData1] = useState([]);
-  const currentPage = 1;
-  const postPerPage = 5;
-  const lastPostIndex = currentPage * postPerPage;
-  const firstPostIndex = lastPostIndex - postPerPage;
-  const currentPost = userData.slice(firstPostIndex, lastPostIndex);
-  const currentPost1 = userData1.slice(firstPostIndex, lastPostIndex);
+  // const currentPage = 1;
+  // const postPerPage = 5;
+  // const lastPostIndex = currentPage * postPerPage;
+  // const firstPostIndex = lastPostIndex - postPerPage;
+  // const currentPost = userData.slice(firstPostIndex, lastPostIndex);
+  // const currentPost1 = userData1.slice(firstPostIndex, lastPostIndex);
 
   useEffect(() => {
     tableQueryQueue();
@@ -68,7 +68,7 @@ const UserQueueLineTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {currentPost1.map((queue, index) => (
+            {userData1.map((queue, index) => (
               <TableRow key={index}>
                 <TableCell
                   align="center"
@@ -78,7 +78,7 @@ const UserQueueLineTable = () => {
                 </TableCell>
               </TableRow>
             ))}
-            {currentPost.map((queue, index) => (
+            {userData.map((queue, index) => (
               <TableRow key={index}>
                 <TableCell
                   align="center"

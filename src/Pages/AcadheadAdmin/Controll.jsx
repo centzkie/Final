@@ -18,7 +18,7 @@ import { db } from "../../firebase-config";
 import { collection, getCountFromServer } from "firebase/firestore";
 const Controll = () => {
   const navigate = useNavigate();
-  
+
   let [transaction, setTransaction] = useState(0);
   let j = 0;
   let k = 0;
@@ -26,20 +26,20 @@ const Controll = () => {
   let m = 0;
   const count = async () => {
     const coll1 = collection(db, "acadNowserving");
-      const snapshot1 = await getCountFromServer(coll1);
-      j = snapshot1.data().count;
+    const snapshot1 = await getCountFromServer(coll1);
+    j = snapshot1.data().count;
 
-      const coll2 = collection(db, "acadPriority");
-      const snapshot2 = await getCountFromServer(coll2);
-      k = snapshot2.data().count;
+    const coll2 = collection(db, "acadPriority");
+    const snapshot2 = await getCountFromServer(coll2);
+    k = snapshot2.data().count;
 
-      const coll = collection(db, "acadQueuing");
-      const snapshot = await getCountFromServer(coll);
-      l = snapshot.data().count;
+    const coll = collection(db, "acadQueuing");
+    const snapshot = await getCountFromServer(coll);
+    l = snapshot.data().count;
 
-      const coll3 = collection(db, "acadSkip");
-      const snapshot3 = await getCountFromServer(coll3);
-      m = snapshot3.data().count;
+    const coll3 = collection(db, "acadSkip");
+    const snapshot3 = await getCountFromServer(coll3);
+    m = snapshot3.data().count;
 
     setTransaction(j + k + l + m);
     return transaction;
@@ -54,7 +54,7 @@ const Controll = () => {
     ) {
       navigate("/admin");
     }
-  },[setTransaction])
+  }, [setTransaction]);
   return (
     <>
       <ThemeProvider theme={Theme}>
@@ -95,7 +95,9 @@ const Controll = () => {
           <Grid item lg={12}>
             <Skip />
           </Grid>
-          Total transaction : {transaction}
+          <Grid item lg={12}>
+            Total transaction : {transaction}
+          </Grid>
         </Grid>
       </Box>
     </>

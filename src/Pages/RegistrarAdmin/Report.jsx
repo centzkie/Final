@@ -18,6 +18,7 @@ import {
   TextField,
   InputAdornment,
   IconButton,
+  Stack,
 } from "@mui/material";
 import { SearchOutlined, Delete } from "@mui/icons-material";
 import img from "../../Img/seal.png";
@@ -99,7 +100,9 @@ const Report = () => {
   const [isDisable, setIsDisable] = useState(true);
   const current = new Date();
   const [date, setDate] = useState(
-    `${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()}-${current.toLocaleTimeString("en-US")}`
+    `${current.getDate()}/${
+      current.getMonth() + 1
+    }/${current.getFullYear()}-${current.toLocaleTimeString("en-US")}`
   );
   const userCollectionArchieve = collection(db, "regArchieve");
 
@@ -124,7 +127,7 @@ const Report = () => {
 
   const tableQueryHistory = async () => {
     const acadQueueCollection = collection(db, "regSummaryreport");
-    const q = query(acadQueueCollection, orderBy("timestamp", "asc"));
+    const q = query(acadQueueCollection, orderBy("timestamp", "desc"));
     const unsub = onSnapshot(q, (snapshot) =>
       setQluserData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     );
@@ -167,36 +170,37 @@ const Report = () => {
   const viewAll = () => {
     setTableMap(true);
   };
-  
-  const deleteSingleData = async (id) => {
-    const docRef = doc(db, "regSummaryreport", id);
-    const snapshot = await getDoc(docRef);
-    await addDoc(userCollectionArchieve, {
-      status: snapshot.data().status,
-      name: snapshot.data().name,
-      transaction: snapshot.data().transaction,
-      email: snapshot.data().email,
-      studentNumber: snapshot.data().studentNumber,
-      address: snapshot.data().address,
-      contact: snapshot.data().contact,
-      userType: snapshot.data().userType,
-      yearSection: snapshot.data().yearSection,
-      ticket: snapshot.data().ticket,
-      timestamp: snapshot.data().timestamp,
-      date: snapshot.data().date,
-    });
 
-    const userDoc = doc(db, "regSummaryreport", id);
-    await deleteDoc(userDoc);
+  const deleteSingleData = async (id) => {
+    if (window.confirm("Are you sure you want to delete this transaction?")) {
+      const docRef = doc(db, "regSummaryreport", id);
+      const snapshot = await getDoc(docRef);
+      await addDoc(userCollectionArchieve, {
+        status: snapshot.data().status,
+        name: snapshot.data().name,
+        transaction: snapshot.data().transaction,
+        email: snapshot.data().email,
+        studentNumber: snapshot.data().studentNumber,
+        address: snapshot.data().address,
+        contact: snapshot.data().contact,
+        userType: snapshot.data().userType,
+        yearSection: snapshot.data().yearSection,
+        ticket: snapshot.data().ticket,
+        timestamp: snapshot.data().timestamp,
+        date: snapshot.data().date,
+      });
+
+      const userDoc = doc(db, "acadSummaryreport", id);
+      await deleteDoc(userDoc);
+    }
   };
 
   const deleteAll = () => {
-    if(qlUserData.length>0){
+    if (qlUserData.length > 0) {
       if (window.confirm("Are you sure you want to delete ?")) {
         moveAllData();
       }
-    }
-    else{
+    } else {
       alert("Delete failed: No data filtered");
     }
   };
@@ -205,7 +209,7 @@ const Report = () => {
     let docRef = doc(db, "regSummaryreport", "ddwd");
     let snapshot = await getDoc(docRef);
 
-    if(searchData.length === 0){
+    if (searchData.length === 0) {
       qlUserData.map(
         async (queue) => (
           (docRef = doc(db, "regSummaryreport", queue.id)),
@@ -227,8 +231,7 @@ const Report = () => {
           await deleteDoc(doc(db, "regSummaryreport", queue.id))
         )
       );
-    }
-    else{
+    } else {
       searchData.map(
         async (queue) => (
           (docRef = doc(db, "regSummaryreport", queue.id)),
@@ -286,18 +289,21 @@ const Report = () => {
           <TextField
             type="email"
             id="Username"
-            label="StudentNo/Contact"
+            label="Search"
             required
             onChange={(e) => {
               setSearch(e.target.value);
             }}
             value={search}
             color="pupMaroon"
-            placeholder="Ex. 2020-23129-SM-0/09458744562"
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton>
+                  <IconButton
+                    sx={{
+                      "&:hover": { backgroundColor: "#ffd700" },
+                    }}
+                  >
                     <SearchOutlined onClick={tableQuerySearch} />
                   </IconButton>
                 </InputAdornment>
@@ -314,20 +320,22 @@ const Report = () => {
           />
         </Box>
         <Box mx={5} sx={{ display: "flex", justifyContent: "end" }}>
-          <Button
-            disable={isDisable}
-            onClick={deleteAll}
-            variant="outlined"
-            color="pupMaroon"
-          >
-            Delete All
-          </Button>
-          <Button onClick={viewAll} variant="outlined" color="pupMaroon">
-            Refresh
-          </Button>
-          <Button variant="outlined" color="pupMaroon" onClick={handlePrint}>
-            Print
-          </Button>
+          <Stack spacing={1.5} direction="row">
+            <Button
+              disable={isDisable}
+              onClick={deleteAll}
+              variant="outlined"
+              color="pupMaroon"
+            >
+              Delete All
+            </Button>
+            <Button onClick={viewAll} variant="outlined" color="pupMaroon">
+              Refresh
+            </Button>
+            <Button variant="outlined" color="pupMaroon" onClick={handlePrint}>
+              Print
+            </Button>
+          </Stack>
         </Box>
         <Box px={5} py={2} mb={5}>
           <TableContainer
@@ -335,9 +343,6 @@ const Report = () => {
             sx={{
               height: "425px",
               margin: "auto",
-              "&::-webkit-scrollbar": {
-                width: "2px",
-              },
             }}
           >
             <Table
@@ -345,9 +350,18 @@ const Report = () => {
               ref={printRef}
             >
               <ThemeProvider theme={styleTableHead}>
-                <TableHead>
+                <TableHead sx={{ position: "sticky", top: 0, zIndex: 10 }}>
                   <TableRow>
-                    <TableCell>Action</TableCell>
+                    <TableCell
+                      sx={{
+                        position: "sticky",
+                        left: 0,
+                        zIndex: 5,
+                        backgroundColor: "#880000",
+                      }}
+                    >
+                      Action
+                    </TableCell>
                     <TableCell>Status</TableCell>
                     <TableCell>Date</TableCell>
                     <TableCell>Ticket</TableCell>
@@ -369,40 +383,32 @@ const Report = () => {
                     <TableBody>
                       {qlUserData.map((queue, index) => (
                         <TableRow key={index}>
-                          <TableCell>
-                            <IconButton>
-                              <Delete
-                                onClick={() => {
-                                  deleteSingleData(queue.id);
-                                }}
-                              />
-                            </IconButton>
-                            {/* <Button
-                              variant="contained"
-                              color="success"
-                              onClick={() => {
-                                deleteSingleData(queue.id);
+                          <Tooltip title="Delete">
+                            <TableCell
+                              sx={{
+                                position: "sticky",
+                                left: 0,
+                                zIndex: 4,
+                                backgroundColor: "#ffffff",
                               }}
                             >
-                              Delete
-                            </Button> */}
-                          </TableCell>
+                              <IconButton>
+                                <Delete
+                                  onClick={() => {
+                                    deleteSingleData(queue.id);
+                                  }}
+                                  color="red"
+                                />
+                              </IconButton>
+                            </TableCell>
+                          </Tooltip>
                           <TableCell>{queue.status}</TableCell>
                           <TableCell>{queue.date}</TableCell>
                           <TableCell align="right" sx={{ fontWeight: "bold" }}>
                             {queue.ticket}
                           </TableCell>
                           <Tooltip title={queue.transaction} arrow>
-                            <TableCell
-                              sx={{
-                                maxWidth: "200px",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                whiteSpace: "nowrap",
-                              }}
-                            >
-                              {queue.transaction}
-                            </TableCell>
+                            <TableCell>{queue.transaction}</TableCell>
                           </Tooltip>
 
                           <TableCell>{queue.name}</TableCell>
@@ -425,31 +431,32 @@ const Report = () => {
                     <TableBody>
                       {searchData.map((queue, index) => (
                         <TableRow key={index}>
-                          <TableCell>
-                            <IconButton>
-                              <Delete
-                                onClick={() => {
-                                  deleteSingleData(queue.id);
-                                }}
-                              />
-                            </IconButton>
-                          </TableCell>
+                          <Tooltip title="Delete">
+                            <TableCell
+                              sx={{
+                                position: "sticky",
+                                left: 0,
+                                zIndex: 4,
+                                backgroundColor: "#ffffff",
+                              }}
+                            >
+                              <IconButton>
+                                <Delete
+                                  onClick={() => {
+                                    deleteSingleData(queue.id);
+                                  }}
+                                  color="red"
+                                />
+                              </IconButton>
+                            </TableCell>
+                          </Tooltip>
                           <TableCell>{queue.status}</TableCell>
                           <TableCell>{queue.date}</TableCell>
                           <TableCell align="right" sx={{ fontWeight: "bold" }}>
                             {queue.ticket}
                           </TableCell>
                           <Tooltip title={queue.transaction} arrow>
-                            <TableCell
-                              sx={{
-                                maxWidth: "200px",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                whiteSpace: "nowrap",
-                              }}
-                            >
-                              {queue.transaction}
-                            </TableCell>
+                            <TableCell>{queue.transaction}</TableCell>
                           </Tooltip>
                           <TableCell>{queue.name}</TableCell>
                           <TableCell>{queue.studentNumber}</TableCell>
