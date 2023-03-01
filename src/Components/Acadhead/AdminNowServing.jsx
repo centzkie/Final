@@ -24,6 +24,7 @@ import {
   getDoc,
   doc,
   deleteDoc,
+  where
 } from "firebase/firestore";
 import { db } from "../../firebase-config";
 
@@ -87,6 +88,8 @@ const AdminNowServing = () => {
   const currentPost = qlUserData.slice(firstPostIndex, lastPostIndex);
   const userCollectionHistory = collection(db, "acadSummaryreport");
   const userCollectionSkip = collection(db, "acadSkip");
+  const userCollectionNowserving = collection(db, "acadNowserving");
+  let admin = "";
 
   const current = new Date();
   const [date, setDate] = useState(
@@ -103,8 +106,9 @@ const AdminNowServing = () => {
 
   // QueueLinetable Query
   const tableQueryQueue = async () => {
-    const acadQueueCollection = collection(db, "acadNowserving");
-    const q = query(acadQueueCollection, orderBy("timestamp", "asc"));
+    const q = query(userCollectionNowserving, 
+      where("admin", "==", localStorage.getItem("Username")), 
+      orderBy("timestamp", "asc"));
     const unsub = onSnapshot(q, (snapshot) =>
       setQluserData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     );
@@ -132,6 +136,7 @@ const AdminNowServing = () => {
       ticket: snapshot.data().ticket,
       timestamp: serverTimestamp(),
       date: date,
+      admin: localStorage.getItem("Username")
     });
     directDeleteUser(id);
   };
@@ -170,6 +175,7 @@ const AdminNowServing = () => {
       yearSection: snapshot.data().yearSection,
       ticket: snapshot.data().ticket,
       timestamp: serverTimestamp(),
+      admin: localStorage.getItem("Username"),
     });
     directDeleteUser(id);
   };

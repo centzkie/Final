@@ -153,6 +153,7 @@ const AdminQueueline = () => {
       userType: snapshot.data().userType,
       yearSection: snapshot.data().yearSection,
       ticket: snapshot.data().ticket,
+      admin: localStorage.getItem("Username"),
       timestamp: serverTimestamp(),
     });
 
@@ -173,6 +174,7 @@ const AdminQueueline = () => {
       yearSection: snapshot.data().yearSection,
       ticket: snapshot.data().ticket,
       timestamp: serverTimestamp(),
+      admin: localStorage.getItem("Username")
     });
 
     directDeleteUser1(id);

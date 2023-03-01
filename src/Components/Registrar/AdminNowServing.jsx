@@ -103,7 +103,7 @@ const AdminNowServing = () => {
 
   // QueueLinetable Query
   const tableQueryQueue = async () => {
-    const acadQueueCollection = collection(db, "regNowserving");
+    const acadQueueCollection = query(collection(db, "regNowserving"), where("admin", "==", sessionStorage.getItem("Username")));
     const q = query(acadQueueCollection, orderBy("timestamp", "asc"));
     const unsub = onSnapshot(q, (snapshot) =>
       setQluserData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))

@@ -83,6 +83,8 @@ const AdminSkip = () => {
   const [userData, setUserData] = useState([]);
   const userCollectionHistory = collection(db, "acadSummaryreport");
   const userCollectionNowserving = collection(db, "acadNowserving");
+  const userCollectionSkip = collection(db, "acadSkip");
+
   const current = new Date();
   const [isDisable, setIsDisable] = useState(false);
 
@@ -113,8 +115,9 @@ const AdminSkip = () => {
 
   // QueueLinetable Query
   const tableQuerySkip = async () => {
-    const acadQueueCollection = collection(db, "acadSkip");
-    const q = query(acadQueueCollection, orderBy("timestamp", "asc"));
+    const q = query(userCollectionSkip, 
+      where("admin", "==", localStorage.getItem("Username")), 
+      orderBy("timestamp", "asc"));
     const unsub = onSnapshot(q, (snapshot) =>
       setUserData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     );
@@ -141,10 +144,18 @@ const AdminSkip = () => {
       yearSection: snapshot.data().yearSection,
       ticket: snapshot.data().ticket,
       timestamp: serverTimestamp(),
+      admin: localStorage.getItem("Username")
     });
     directDeleteUser(id);
   };
   const moveUserToHistory = async (id) => {
+    let admin = "";
+    if(localStorage.getItem("Username")==="adminacad1"){
+      admin = "Ms. Katherine Khay Castro";
+    }
+    else{
+      admin = "Ambeth Casimiro";
+    }
     const docRef = doc(db, "acadSkip", id);
     const snapshot = await getDoc(docRef);
     await addDoc(userCollectionHistory, {
@@ -160,6 +171,7 @@ const AdminSkip = () => {
       ticket: snapshot.data().ticket,
       timestamp: serverTimestamp(),
       date: date,
+      counter: admin
     });
     directDeleteUser(id);
   };

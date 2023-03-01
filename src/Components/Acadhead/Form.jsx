@@ -451,17 +451,17 @@ const Form = () => {
       const coll = collection(db, "acadTicket");
       const q = query(coll, where("type", "==", "priority"));
       const snapshot = await getCountFromServer(q);
-      window.ticket = "PA00" + (snapshot.data().count + 1);
       await addDoc(userCollection3, {
         type: "priority",})
+      window.ticket = "PA00" + (snapshot.data().count + 1);
     }
     else{
       const coll = collection(db, "acadTicket");
       const q = query(coll, where("type", "==", "regular"));
       const snapshot = await getCountFromServer(q);
-      window.ticket = "RA00" + (snapshot.data().count + 1);
       await addDoc(userCollection3, { 
         type: "regular",})
+      window.ticket = "RA00" + (snapshot.data().count + 1);
     }
   }
 

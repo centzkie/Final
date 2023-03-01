@@ -43,7 +43,9 @@ const Login = () => {
   useEffect(() => {
     if (
       localStorage.getItem("Password") === "admin" &&
-      localStorage.getItem("Username") === "adminacad"
+      localStorage.getItem("Username") === "adminacad1" || 
+      localStorage.getItem("Password") === "admin" &&
+      localStorage.getItem("Username") === "adminacad2"
     ) {
       navigate("/acad-head-controll");
     }
@@ -57,12 +59,19 @@ const Login = () => {
 
   const validate = async () => {
     if (username.length !== 0 && pass.length !== 0) {
-      if (pass === "admin" && username === "adminacad") {
+      if (pass === "admin" && username === "adminacad1") {
         //window.Authentication = true;
         localStorage.setItem("Password", "admin");
-        localStorage.setItem("Username", "adminacad");
+        localStorage.setItem("Username", "adminacad1");
         navigate("/acad-head-controll");
-      } else if (pass === "admin" && username === "adminreg") {
+      }
+      else if (pass === "admin" && username === "adminacad2") {
+        //window.Authentication = true;
+        localStorage.setItem("Password", "admin");
+        localStorage.setItem("Username", "adminacad2");
+        navigate("/acad-head-controll");
+      }
+      else if (pass === "admin" && username === "adminreg") {
         //window.Authentication = true;
         localStorage.setItem("Password1", "admin");
         localStorage.setItem("Username1", "adminreg");

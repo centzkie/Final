@@ -48,12 +48,12 @@ const Controll = () => {
   useEffect(() => {
     console.log("Render");
     count();
-    if (
-      localStorage.getItem("Password") !== "admin" &&
-      localStorage.getItem("Username") !== "adminacad"
-    ) {
-      navigate("/admin");
-    }
+      if (
+        localStorage.getItem("Password") !== "admin" &&
+        localStorage.getItem("Username") !== "adminacad1"
+      ) {
+        navigate("/admin");
+      }
   },[setTransaction])
   return (
     <>
