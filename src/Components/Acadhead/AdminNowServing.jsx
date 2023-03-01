@@ -89,11 +89,12 @@ const AdminNowServing = () => {
   const userCollectionHistory = collection(db, "acadSummaryreport");
   const userCollectionSkip = collection(db, "acadSkip");
   const userCollectionNowserving = collection(db, "acadNowserving");
-  let admin = "";
 
   const current = new Date();
   const [date, setDate] = useState(
-    `${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()} - ${current.toLocaleTimeString("en-US")}`
+    `${current.getDate()}/${
+      current.getMonth() + 1
+    }/${current.getFullYear()} - ${current.toLocaleTimeString("en-US")}`
   );
 
   for (let i = 1; i <= Math.ceil(qlUserData.length / QlPostPerPage); i++) {
@@ -121,6 +122,13 @@ const AdminNowServing = () => {
   };
 
   const moveToHistorycomplete = async (id) => {
+    let admin = "";
+    if(localStorage.getItem("Username")==="adminacad1"){
+      admin = "Ms. Katherine Khay Castro";
+    }
+    else{
+      admin = "Ambeth Casimiro";
+    }
     const docRef = doc(db, "acadNowserving", id);
     const snapshot = await getDoc(docRef);
     await addDoc(userCollectionHistory, {
@@ -136,12 +144,19 @@ const AdminNowServing = () => {
       ticket: snapshot.data().ticket,
       timestamp: serverTimestamp(),
       date: date,
-      admin: localStorage.getItem("Username")
+      counter: admin
     });
     directDeleteUser(id);
   };
 
   const moveToHistoryincomplete = async (id) => {
+    let admin = "";
+    if(localStorage.getItem("Username")==="adminacad1"){
+      admin = "Ms. Katherine Khay Castro";
+    }
+    else{
+      admin = "Ambeth Casimiro";
+    }
     const docRef = doc(db, "acadNowserving", id);
     const snapshot = await getDoc(docRef);
     await addDoc(userCollectionHistory, {
@@ -157,6 +172,7 @@ const AdminNowServing = () => {
       ticket: snapshot.data().ticket,
       timestamp: serverTimestamp(),
       date: date,
+      counter: admin
     });
     directDeleteUser(id);
   };
@@ -192,20 +208,21 @@ const AdminNowServing = () => {
       >
         Now Serving
       </Typography>
-      <TableContainer
-        component={Paper}
-        sx={{
-          height: "220px",
-          "&::-webkit-scrollbar": {
-            width: "2px",
-          },
-        }}
-      >
+      <TableContainer component={Paper}>
         <Table aria-label="simple table">
           <ThemeProvider theme={styleTableHead}>
             <TableHead>
               <TableRow>
-                <TableCell>Actions</TableCell>
+                <TableCell
+                  sx={{
+                    position: "sticky",
+                    left: "0",
+                    zIndex: "5",
+                    backgroundColor: "#880000",
+                  }}
+                >
+                  Actions
+                </TableCell>
                 <TableCell>Ticket</TableCell>
                 <TableCell>Transaction</TableCell>
                 <TableCell>Name</TableCell>
@@ -223,7 +240,14 @@ const AdminNowServing = () => {
             <TableBody>
               {currentPost.map((queue, index) => (
                 <TableRow key={index}>
-                  <TableCell>
+                  <TableCell
+                    sx={{
+                      position: "sticky",
+                      left: "0",
+                      zIndex: "5",
+                      backgroundColor: "#ffffff",
+                    }}
+                  >
                     <Stack spacing={1.5} direction="row">
                       <Stack>
                         <Button

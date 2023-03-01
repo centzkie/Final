@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import validator from 'validator'
+import validator from "validator";
 import {
   ThemeProvider,
   TextField,
@@ -19,6 +19,7 @@ import {
   Radio,
   FormLabel,
   RadioGroup,
+  IconButton,
 } from "@mui/material";
 import {
   School,
@@ -26,13 +27,14 @@ import {
   AlternateEmail,
   ChevronRight,
   HighlightOff,
+  Close,
 } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import Theme from "../../CustomTheme";
 import moment from "moment-timezone";
 import { db } from "../../firebase-config";
 import { useNavigate } from "react-router-dom";
-import '../../App.css';
+import "../../App.css";
 import {
   collection,
   addDoc,
@@ -40,7 +42,7 @@ import {
   where,
   query,
   getDocs,
-  getCountFromServer
+  getCountFromServer,
 } from "firebase/firestore";
 import { sm, transactionsAcad, yrSN, yrSections } from "../Selectfunctions";
 import { async } from "@firebase/util";
@@ -58,14 +60,15 @@ const Form = () => {
   const [selectedUser, setSelectedUser] = useState("");
   const [selectedForm, setSelectedForm] = useState("");
   const [transaction, setTransaction] = useState([]);
+  const [showSelect, setShowSelect] = useState(false);
   const navigate = useNavigate();
   const userCollection1 = collection(db, "acadQueuing");
   const userCollection2 = collection(db, "acadPriority");
   const userCollection3 = collection(db, "acadTicket");
   const [error, setError] = useState(false);
-  const [emailError, setEmailError] = useState('')
+  const [emailError, setEmailError] = useState("");
   let fullStudentNumber = snYear + "-" + studentNumber + "-" + branch;
-  let [countData,setCount] = useState();
+  let [countData, setCount] = useState();
   let sampleID = 0;
 
   const timezone = "Asia/Manila";
@@ -89,10 +92,10 @@ const Form = () => {
   }, []);
 
   useEffect(() => {
-    const checkTime = async() => {
+    const checkTime = async () => {
       //count();
     };
-    
+
     const intervalId = setInterval(checkTime, 5000);
 
     return () => clearInterval(intervalId);
@@ -102,8 +105,7 @@ const Form = () => {
     if (sessionStorage.getItem("Auth") === "false") {
       //navigate("/");
     }
-    if(countData === 5)
-    {
+    if (countData === 5) {
       alert("Slot full");
       navigate("/");
     }
@@ -123,7 +125,7 @@ const Form = () => {
     } = event;
     setTransaction(
       // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
+      typeof value === "string" ? value.split(", ") : value
     );
   };
 
@@ -137,14 +139,14 @@ const Form = () => {
 
   const validateEmail = (e) => {
     setEmail(e.target.value);
-  
+
     if (validator.isEmail(email)) {
-      setEmailError(true)
+      setEmailError(true);
     } else {
-      setEmailError(false)
+      setEmailError(false);
     }
     console.log(emailError);
-  }
+  };
 
   const numOnlyContact = (e) => {
     const re = /^[0-9\b]+$/;
@@ -171,58 +173,55 @@ const Form = () => {
     setEmail("");
   };
 
-  const handleErr =() =>{
-    if (name.length > 0 && transaction.length > 0 && selectedForm.length > 0 &&
-      selectedUser.length > 0){
-        if(selectedUser === "Student"){
-          if (
-            email.length > 0 &&
-            studentNumber.length > 0 &&
-            branch.length > 0 &&
-            snYear.length > 0){
-              if(name.length > 3){
-                setError(false);
-                creatingUser();
-              }else{
-                setError(true);
-                alert("Please check your name");
-              }
-
-              if(emailError){
-                setError(true);
-              }
-              else{
-                setError(false);
-              }
-              
-          }
-          else{
-              setError(true);
-              alert("Please fill the required field/s");
-            }
-          }
-
-        else if (selectedUser === "Guest/Parent/Alumni") {
-          if (contact.length > 0 && contact.length === 11){
+  const handleErr = () => {
+    if (
+      name.length > 0 &&
+      transaction.length > 0 &&
+      selectedForm.length > 0 &&
+      selectedUser.length > 0
+    ) {
+      if (selectedUser === "Student") {
+        if (
+          email.length > 0 &&
+          studentNumber.length > 0 &&
+          branch.length > 0 &&
+          snYear.length > 0
+        ) {
+          if (name.length > 3) {
             setError(false);
             creatingUser();
-          }
-          else{
+          } else {
             setError(true);
-            if (contact.length === 0){
-              alert("Please fill the required field/s");
-            }
-            else if (contact.length < 11){
-              alert("Please check your contact number");
-            }
+            alert("Please check your name");
+          }
+
+          if (emailError) {
+            setError(true);
+          } else {
+            setError(false);
+          }
+        } else {
+          setError(true);
+          alert("Please fill the required field/s");
+        }
+      } else if (selectedUser === "Guest/Parent/Alumni") {
+        if (contact.length > 0 && contact.length === 11) {
+          setError(false);
+          creatingUser();
+        } else {
+          setError(true);
+          if (contact.length === 0) {
+            alert("Please fill the required field/s");
+          } else if (contact.length < 11) {
+            alert("Please check your contact number");
           }
         }
       }
-      else{
-        alert("Fill required field/s");
-        setError(true);
-      }
+    } else {
+      alert("Fill required field/s");
+      setError(true);
     }
+  };
 
   const insert = async () => {
     let subemail = email;
@@ -445,9 +444,8 @@ const Form = () => {
     }
   };
 
-  const generateTicket=async()=>{
-
-    if(selectedForm === "Priority"){
+  const generateTicket = async () => {
+    if (selectedForm === "Priority") {
       const coll = collection(db, "acadTicket");
       const q = query(coll, where("type", "==", "priority"));
       const snapshot = await getCountFromServer(q);
@@ -459,11 +457,12 @@ const Form = () => {
       const coll = collection(db, "acadTicket");
       const q = query(coll, where("type", "==", "regular"));
       const snapshot = await getCountFromServer(q);
-      await addDoc(userCollection3, { 
+      await addDoc(userCollection3, {
         type: "regular",})
       window.ticket = "RA00" + (snapshot.data().count + 1);
     }
-  }
+    
+  };
 
   // Validating for creating user
   const creatingUser = async () => {
@@ -519,14 +518,16 @@ const Form = () => {
                       ),
                     }}
                   />
-                  {error && name.length === 0?
-                  <label className="red-text">
-                    Name can't be empty
-                  </label>:""}
-                  {error && name.length >0 && name.length <= 3?
-                  <label className="red-text">
-                    Please enter valid name
-                  </label>:""}
+                  {error && name.length === 0 ? (
+                    <label className="red-text">Name can't be empty</label>
+                  ) : (
+                    ""
+                  )}
+                  {error && name.length > 0 && name.length <= 3 ? (
+                    <label className="red-text">Please enter valid name</label>
+                  ) : (
+                    ""
+                  )}
                   <FormControl fullWidth required>
                     <InputLabel
                       id="demo-multiple-name-label"
@@ -537,6 +538,9 @@ const Form = () => {
                     </InputLabel>
                     <Select
                       required
+                      open={showSelect}
+                      onOpen={() => setShowSelect(true)}
+                      onClose={() => setShowSelect(false)}
                       labelId="demo-multiple-name-label"
                       id="demo-multiple-name"
                       color="pupMaroon"
@@ -556,6 +560,32 @@ const Form = () => {
                         },
                       }}
                     >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          paddingX: "20px",
+                          position: "sticky",
+                          top: "0",
+                          backgroundColor: "white",
+                          zIndex: "1",
+                        }}
+                      >
+                        <Typography
+                          fontWeight="bold"
+                          sx={{ textDecoration: "underline" }}
+                        >
+                          Transactions
+                        </Typography>
+                        <IconButton>
+                          <Close
+                            onClick={() => {
+                              setShowSelect(false);
+                            }}
+                          />
+                        </IconButton>
+                      </Box>
                       {transactionsAcad.map((transaction) => (
                         <MenuItem
                           key={transaction}
@@ -571,11 +601,12 @@ const Form = () => {
                       ))}
                     </Select>
                   </FormControl>
-                  {error && transaction.length === 0?
-                  <label className="red-text">
-                    Select transaction
-                  </label>:""}
-                  
+                  {error && transaction.length === 0 ? (
+                    <label className="red-text">Select transaction</label>
+                  ) : (
+                    ""
+                  )}
+
                   <FormControl>
                     <FormLabel
                       id="demo-row-radio-buttons-group-label"
@@ -603,10 +634,11 @@ const Form = () => {
                         label="PWD/Pregnant/Senior"
                       />
                     </RadioGroup>
-                    {error && selectedForm.length === 0?
-                      <label className="red-text">
-                        Choose Lane
-                      </label>:""}
+                    {error && selectedForm.length === 0 ? (
+                      <label className="red-text">Choose Lane</label>
+                    ) : (
+                      ""
+                    )}
                   </FormControl>
                   <FormControl>
                     <FormLabel
@@ -640,10 +672,11 @@ const Form = () => {
                         label="Guest/Parent/Alumni"
                       />
                     </RadioGroup>
-                    {error && selectedUser.length === 0?
-                      <label className="red-text">
-                        Choose User
-                      </label>:""}
+                    {error && selectedUser.length === 0 ? (
+                      <label className="red-text">Choose User</label>
+                    ) : (
+                      ""
+                    )}
                     {selectedUser === "Student" && (
                       <>
                         <Stack spacing={2} direction="column">
@@ -660,6 +693,7 @@ const Form = () => {
                               <InputLabel
                                 id="demo-simple-select-label"
                                 color="pupMaroon"
+                                required
                               >
                                 SN-Year
                               </InputLabel>
@@ -705,6 +739,7 @@ const Form = () => {
                               <InputLabel
                                 id="demo-simple-select-label"
                                 color="pupMaroon"
+                                required
                               >
                                 Branch
                               </InputLabel>
@@ -727,10 +762,15 @@ const Form = () => {
                               </Select>
                             </FormControl>
                           </Stack>
-                          {error && snYear.length === 0 || studentNumber.length === 0 || branch.length === 0?
-                              <label className="red-text">
-                                Student Number can't be empty
-                              </label>:""}
+                          {(error && snYear.length === 0) ||
+                          studentNumber.length === 0 ||
+                          branch.length === 0 ? (
+                            <label className="red-text">
+                              Student Number can't be empty
+                            </label>
+                          ) : (
+                            ""
+                          )}
 
                           <FormControl fullWidth>
                             <InputLabel
@@ -740,7 +780,6 @@ const Form = () => {
                               Year & Section
                             </InputLabel>
                             <Select
-                              required
                               labelId="demo-simple-select-label"
                               id="demo-simple-select"
                               value={yearSection}
@@ -775,14 +814,18 @@ const Form = () => {
                               ),
                             }}
                           />
-                          {error && email.length === 0?
-                              <label className="red-text">
-                                Email can't be empty
-                              </label>:""}
-                          {error && email.length > 0 && !emailError?
-                          <label className="red-text">
-                            Invalid Email
-                           </label>:""}
+                          {error && email.length === 0 ? (
+                            <label className="red-text">
+                              Email can't be empty
+                            </label>
+                          ) : (
+                            ""
+                          )}
+                          {error && email.length > 0 && !emailError ? (
+                            <label className="red-text">Invalid Email</label>
+                          ) : (
+                            ""
+                          )}
                         </Stack>
                       </>
                     )}
@@ -802,10 +845,22 @@ const Form = () => {
                             color="pupMaroon"
                             maxlength="10"
                           />
-                          {error && contact.length === 0?
-                            <label className="red-text">Contact can't be empty</label>:""}
-                          {error && contact.length > 0 && contact.length <11 ?
-                            <label className="red-text">Contact must 11 digit</label>:""}
+                          {error && contact.length === 0 ? (
+                            <label className="red-text">
+                              Contact can't be empty
+                            </label>
+                          ) : (
+                            ""
+                          )}
+                          {error &&
+                          contact.length > 0 &&
+                          contact.length < 11 ? (
+                            <label className="red-text">
+                              Contact must 11 digit
+                            </label>
+                          ) : (
+                            ""
+                          )}
                           <TextField
                             type="email"
                             id="outlined-textarea"

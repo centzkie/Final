@@ -201,18 +201,24 @@ const AdminQueueline = () => {
       <TableContainer
         component={Paper}
         sx={{
-          height: "320px",
+          height: "343px",
           margin: "auto",
-          "&::-webkit-scrollbar": {
-            width: "2px",
-          },
         }}
       >
-        <Table sx={{ tableLayout: "auto", height: "maxContent" }}>
+        <Table>
           <ThemeProvider theme={styleTableHead}>
-            <TableHead sx={{ position: "sticky", top: 0, zIndex: 1 }}>
+            <TableHead sx={{ position: "sticky", top: 0, zIndex: 10 }}>
               <TableRow>
-                <TableCell>Actions</TableCell>
+                <TableCell
+                  sx={{
+                    position: "sticky",
+                    left: "0",
+                    zIndex: "5",
+                    backgroundColor: "#880000",
+                  }}
+                >
+                  Actions
+                </TableCell>
                 <TableCell>Ticket</TableCell>
                 <TableCell>Transactions</TableCell>
                 <TableCell>Name</TableCell>
@@ -230,7 +236,14 @@ const AdminQueueline = () => {
             <TableBody>
               {prioData.map((queue, index) => (
                 <TableRow key={index}>
-                  <TableCell>
+                  <TableCell
+                    sx={{
+                      position: "sticky",
+                      left: "0",
+                      zIndex: "5",
+                      backgroundColor: "#ffffff",
+                    }}
+                  >
                     <Button
                       disabled={isDisable}
                       variant="contained"
@@ -273,7 +286,14 @@ const AdminQueueline = () => {
               ))}
               {qlUserData.map((queue, index) => (
                 <TableRow key={index}>
-                  <TableCell>
+                  <TableCell
+                    sx={{
+                      position: "sticky",
+                      left: "0",
+                      zIndex: "5",
+                      backgroundColor: "#ffffff",
+                    }}
+                  >
                     <Button
                       variant="contained"
                       disabled={isDisable}

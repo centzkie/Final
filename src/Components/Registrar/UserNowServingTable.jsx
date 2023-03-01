@@ -36,7 +36,7 @@ const UserNowServingTable = () => {
   };
   return (
     <>
-      <TableContainer component={Paper} sx={{ minHeight: "160px" }}>
+      <TableContainer component={Paper} sx={{ minHeight: "100px" }}>
         <Table aria-label="simple table">
           <TableHead>
             <TableRow sx={{ bgcolor: "#880000" }}>
