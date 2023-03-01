@@ -244,6 +244,12 @@ const Form = () => {
       subaddress = "N/A";
     }
     if (selectedForm === "Regular") {
+      if (selectedForm === "Priority") {
+        window.ticket = "PA00" + (snapshot.data().count + 1);
+      }
+      else{
+        window.ticket = "RA00" + (snapshot.data().count + 1);
+      }
       if (window.confirm("Are you sure you wish to add this transaction ?")) {
         generateTicket();
         await addDoc(userCollection1, {
@@ -258,11 +264,19 @@ const Form = () => {
           ticket: window.ticket,
           timestamp: serverTimestamp(),
         });
+        await addDoc(userCollection3, {
+          type: "priority",})
         generateSuccess();
       }
     } else {
       if (window.confirm("Are you sure you wish to add this transaction ?")) {
         generateTicket();
+        if (selectedForm === "Priority") {
+          window.ticket = "PA00" + (snapshot.data().count + 1);
+        }
+        else{
+          window.ticket = "RA00" + (snapshot.data().count + 1);
+        }
         await addDoc(userCollection2, {
           name: name,
           transaction: transaction,
@@ -275,6 +289,8 @@ const Form = () => {
           ticket: window.ticket,
           timestamp: serverTimestamp(),
         });
+        await addDoc(userCollection3, {
+          type: "priority",})
         generateSuccess();
       }
     }
@@ -449,17 +465,13 @@ const Form = () => {
       const coll = collection(db, "acadTicket");
       const q = query(coll, where("type", "==", "priority"));
       const snapshot = await getCountFromServer(q);
-      await addDoc(userCollection3, {
-        type: "priority",})
-      window.ticket = "PA00" + (snapshot.data().count + 1);
+      window.ticket = snapshot.data().count;
     }
     else{
       const coll = collection(db, "acadTicket");
       const q = query(coll, where("type", "==", "regular"));
       const snapshot = await getCountFromServer(q);
-      await addDoc(userCollection3, {
-        type: "regular",})
-      window.ticket = "RA00" + (snapshot.data().count + 1);
+      window.ticket = snapshot.data().count;
     }
     
   };
