@@ -92,6 +92,7 @@ const styleTableBody = createTheme({
 });
 
 const Report = () => {
+  let [transaction, setTransaction] = useState(0);
   const [qlUserData, setQluserData] = useState([]);
   const [searchData, setSearchData] = useState([]);
   const [tableMap, setTableMap] = useState(true);
@@ -104,8 +105,8 @@ const Report = () => {
       current.getMonth() + 1
     }/${current.getFullYear()}-${current.toLocaleTimeString("en-US")}`
   );
-  const userCollectionArchieve = collection(db, "acadArchieve");
 
+  const userCollectionArchieve = collection(db, "acadArchieve");
   const navigate = useNavigate();
   const printRef = useRef();
   const handlePrint = useReactToPrint({
@@ -127,7 +128,7 @@ const Report = () => {
 
   const tableQueryHistory = async () => {
     const acadQueueCollection = collection(db, "acadSummaryreport");
-    const q = query(acadQueueCollection, orderBy("timestamp", "asc"));
+    const q = query(acadQueueCollection, orderBy("timestamp", "desc"));
     const unsub = onSnapshot(q, (snapshot) =>
       setQluserData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     );
@@ -287,18 +288,21 @@ const Report = () => {
           <TextField
             type="email"
             id="Username"
-            label="StudentNo/Contact"
+            label="Search"
             required
             onChange={(e) => {
               setSearch(e.target.value);
             }}
             value={search}
             color="pupMaroon"
-            placeholder="Ex. 2020-23129-SM-0/09458744562"
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton>
+                  <IconButton
+                    sx={{
+                      "&:hover": { backgroundColor: "#ffd700" },
+                    }}
+                  >
                     <SearchOutlined onClick={tableQuerySearch} />
                   </IconButton>
                 </InputAdornment>

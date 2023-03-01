@@ -192,7 +192,7 @@ const Archive = () => {
 
   const tableQueryArchive = async () => {
     const acadArchiveCollection = collection(db, "acadArchieve");
-    const q = query(acadArchiveCollection, orderBy("timestamp", "asc"));
+    const q = query(acadArchiveCollection, orderBy("timestamp", "desc"));
     const unsub = onSnapshot(q, (snapshot) =>
       setUserData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     );
@@ -290,19 +290,22 @@ const Archive = () => {
           <TextField
             type="email"
             id="Username"
-            label="Name"
+            label="Search"
             required
             onChange={(e) => {
               setSearch(e.target.value);
             }}
             value={search}
             color="pupMaroon"
-            placeholder="Juan dela Cruz"
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton onClick={tableQuerySearch}>
-                    <SearchOutlined />
+                  <IconButton
+                    sx={{
+                      "&:hover": { backgroundColor: "#ffd700" },
+                    }}
+                  >
+                    <SearchOutlined onClick={tableQuerySearch} />
                   </IconButton>
                 </InputAdornment>
               ),

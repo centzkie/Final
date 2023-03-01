@@ -127,7 +127,7 @@ const Report = () => {
 
   const tableQueryHistory = async () => {
     const acadQueueCollection = collection(db, "regSummaryreport");
-    const q = query(acadQueueCollection, orderBy("timestamp", "asc"));
+    const q = query(acadQueueCollection, orderBy("timestamp", "desc"));
     const unsub = onSnapshot(q, (snapshot) =>
       setQluserData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     );
@@ -289,18 +289,21 @@ const Report = () => {
           <TextField
             type="email"
             id="Username"
-            label="Name"
+            label="Search"
             required
             onChange={(e) => {
               setSearch(e.target.value);
             }}
             value={search}
             color="pupMaroon"
-            placeholder="Juan dela Cruz"
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton>
+                  <IconButton
+                    sx={{
+                      "&:hover": { backgroundColor: "#ffd700" },
+                    }}
+                  >
                     <SearchOutlined onClick={tableQuerySearch} />
                   </IconButton>
                 </InputAdornment>
@@ -380,23 +383,25 @@ const Report = () => {
                     <TableBody>
                       {qlUserData.map((queue, index) => (
                         <TableRow key={index}>
-                          <TableCell
-                            sx={{
-                              position: "sticky",
-                              left: 0,
-                              zIndex: 4,
-                              backgroundColor: "#ffffff",
-                            }}
-                          >
-                            <IconButton>
-                              <Delete
-                                onClick={() => {
-                                  deleteSingleData(queue.id);
-                                }}
-                                color="red"
-                              />
-                            </IconButton>
-                          </TableCell>
+                          <Tooltip title="Delete">
+                            <TableCell
+                              sx={{
+                                position: "sticky",
+                                left: 0,
+                                zIndex: 4,
+                                backgroundColor: "#ffffff",
+                              }}
+                            >
+                              <IconButton>
+                                <Delete
+                                  onClick={() => {
+                                    deleteSingleData(queue.id);
+                                  }}
+                                  color="red"
+                                />
+                              </IconButton>
+                            </TableCell>
+                          </Tooltip>
                           <TableCell>{queue.status}</TableCell>
                           <TableCell>{queue.date}</TableCell>
                           <TableCell align="right" sx={{ fontWeight: "bold" }}>
@@ -426,23 +431,25 @@ const Report = () => {
                     <TableBody>
                       {searchData.map((queue, index) => (
                         <TableRow key={index}>
-                          <TableCell
-                            sx={{
-                              position: "sticky",
-                              left: 0,
-                              zIndex: 4,
-                              backgroundColor: "#ffffff",
-                            }}
-                          >
-                            <IconButton>
-                              <Delete
-                                onClick={() => {
-                                  deleteSingleData(queue.id);
-                                }}
-                                color="red"
-                              />
-                            </IconButton>
-                          </TableCell>
+                          <Tooltip title="Delete">
+                            <TableCell
+                              sx={{
+                                position: "sticky",
+                                left: 0,
+                                zIndex: 4,
+                                backgroundColor: "#ffffff",
+                              }}
+                            >
+                              <IconButton>
+                                <Delete
+                                  onClick={() => {
+                                    deleteSingleData(queue.id);
+                                  }}
+                                  color="red"
+                                />
+                              </IconButton>
+                            </TableCell>
+                          </Tooltip>
                           <TableCell>{queue.status}</TableCell>
                           <TableCell>{queue.date}</TableCell>
                           <TableCell align="right" sx={{ fontWeight: "bold" }}>

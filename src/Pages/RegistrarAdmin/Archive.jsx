@@ -83,6 +83,9 @@ const styleTableBody = createTheme({
         root: {
           whiteSpace: "nowrap",
           textAlign: "center",
+          maxWidth: "200px",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
         },
       },
     },
@@ -189,7 +192,7 @@ const Archive = () => {
 
   const tableQueryArchive = async () => {
     const acadArchiveCollection = collection(db, "regArchieve");
-    const q = query(acadArchiveCollection, orderBy("timestamp", "asc"));
+    const q = query(acadArchiveCollection, orderBy("timestamp", "desc"));
     const unsub = onSnapshot(q, (snapshot) =>
       setUserData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     );
@@ -287,19 +290,22 @@ const Archive = () => {
           <TextField
             type="email"
             id="Username"
-            label="Name"
+            label="Search"
             required
             onChange={(e) => {
               setSearch(e.target.value);
             }}
             value={search}
             color="pupMaroon"
-            placeholder="Juan dela Cruz"
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton onClick={tableQuerySearch}>
-                    <SearchOutlined />
+                  <IconButton
+                    sx={{
+                      "&:hover": { backgroundColor: "#ffd700" },
+                    }}
+                  >
+                    <SearchOutlined onClick={tableQuerySearch} />
                   </IconButton>
                 </InputAdornment>
               ),
@@ -437,23 +443,39 @@ const Archive = () => {
                     <TableBody>
                       {searchData.map((queue, index) => (
                         <TableRow key={index}>
-                          <TableCell>
-                            <IconButton
-                              onClick={tableQuerySearch}
-                              sx={{ color: "#00FF00" }}
-                            >
-                              <Restore />
-                            </IconButton>
-                          </TableCell>
-                          <TableCell>
-                            <IconButton
-                              onClick={() => {
-                                deletePermanentSingleData(queue.id);
-                              }}
-                              sx={{ color: "#FF0000" }}
-                            >
-                              <Delete />
-                            </IconButton>
+                          <TableCell
+                            sx={{
+                              position: "sticky",
+                              left: 0,
+                              zIndex: 3,
+                              backgroundColor: "#ffffff",
+                            }}
+                          >
+                            <Stack spacing={1.5} direction="row">
+                              <Typography>
+                                <Tooltip title="Restore">
+                                  <IconButton
+                                    onClick={() => {
+                                      deleteSingleData(queue.id);
+                                    }}
+                                    sx={{ color: "#00FF00" }}
+                                  >
+                                    <Restore />
+                                  </IconButton>
+                                </Tooltip>
+                              </Typography>
+                              <Typography>
+                                <Tooltip title="delete">
+                                  <IconButton
+                                    onClick={() => {
+                                      deletePermanentSingleData(queue.id);
+                                    }}
+                                  >
+                                    <Delete color="red" />
+                                  </IconButton>
+                                </Tooltip>
+                              </Typography>
+                            </Stack>
                           </TableCell>
                           <TableCell>{queue.status}</TableCell>
                           <TableCell>{queue.date}</TableCell>
