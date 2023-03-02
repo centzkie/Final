@@ -411,7 +411,9 @@ const Form = () => {
     }
     if (selectedForm === "Regular") {
       if (window.confirm("Are you sure you wish to add this transaction regular?")) {
-        generateTicket();
+        const coll = query(collection(db, "acadTicket"),where("type", "==", "regular"));
+        const snapshot = await getCountFromServer(coll);
+        window.ticket = "RA00" + (snapshot.data().count + 1);
         await addDoc(userCollection1, {
           name: name,
           transaction: transaction,
@@ -424,11 +426,15 @@ const Form = () => {
           ticket: window.ticket,
           timestamp: serverTimestamp(),
         });
+        await addDoc(userCollection3, {
+          type: "regular",})
         generateSuccess();
       }
     } else {
       if (window.confirm("Are you sure you wish to add this transaction priority?")) {
-        generateTicket();
+        const coll = query(collection(db, "acadTicket"),where("type", "==", "priority"));
+        const snapshot = await getCountFromServer(coll);
+        window.ticket = "PA00" + (snapshot.data().count + 1);
         await addDoc(userCollection2, {
           name: name,
           transaction: transaction,
@@ -441,33 +447,12 @@ const Form = () => {
           ticket: window.ticket,
           timestamp: serverTimestamp(),
         });
+        await addDoc(userCollection3, {
+          type: "priority",})
         generateSuccess();
       }
     }
   };
-
-  const generateTicket = async () => {
-    let count = 0;
-    if (selectedForm === "Priority") {
-      const coll = collection(db, "acadTicket");
-      const q = query(coll, where("type", "==", "priority"));
-      const snapshot = await getCountFromServer(q);
-      count = snapshot.data().count + 1;
-      window.ticket = "PA00" + count;
-      await addDoc(userCollection3, {
-        type: "priority",})
-      
-    }
-    else if (selectedForm === "Regular"){
-      const coll = collection(db, "acadTicket");
-      const q = query(coll, where("type", "==", "regular"));
-      const snapshot = await getCountFromServer(q);
-      count = snapshot.data().count + 1;
-      window.ticket = "RA00" + count;
-      await addDoc(userCollection3, { 
-        type: "regular",})
-    }
-  }
 
   // Validating for creating user
   const creatingUser = async () => {

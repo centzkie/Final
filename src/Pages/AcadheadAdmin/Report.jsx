@@ -19,6 +19,10 @@ import {
   InputAdornment,
   IconButton,
   Stack,
+  FormControl,
+  MenuItem,
+  Select,
+  InputLabel,
 } from "@mui/material";
 import { SearchOutlined, Delete } from "@mui/icons-material";
 import img from "../../Img/seal.png";
@@ -41,6 +45,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { async } from "@firebase/util";
 import { useReactToPrint } from "react-to-print";
+import { transactionsAcad } from "../../Components/Selectfunctions";
 
 // table header syle
 const styleTableHead = createTheme({
@@ -94,11 +99,14 @@ const styleTableBody = createTheme({
 const Report = () => {
   let [transaction, setTransaction] = useState(0);
   const [qlUserData, setQluserData] = useState([]);
-  const [searchData, setSearchData] = useState([]);
+  const [searchData, setSearchData] = useState("");
   const [tableMap, setTableMap] = useState(true);
   const [search, setSearch] = useState("");
   const [checked, setChecked] = useState(true);
+  const [sortTransaction, setSortTransaction] = useState("");
   const [isDisable, setIsDisable] = useState(true);
+  const [sort, setSort] = useState("");
+  const [sortDate, setSortDate] = useState("");
   const current = new Date();
   const [date, setDate] = useState(
     `${current.getDate()}/${
@@ -143,25 +151,33 @@ const Report = () => {
     );
     return unsub;
   };
-  const handleChangeSort = async(e)=>{
+  const handleChangeSort = async (e) => {
     let unsub;
-    if(tableMap){
+    setSort(e.target.value);
+    if (tableMap) {
       let acadQueueCollection = collection(db, "acadSummaryreport");
       let q = query(acadQueueCollection, orderBy(e.target.value));
       unsub = onSnapshot(q, (snapshot) =>
-        setQluserData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        setQluserData(
+          snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        )
       );
-    }
-    else{
+    } else {
       let acadQueueCollection = collection(db, "acadSummaryreport");
-      let q = query(acadQueueCollection,where("name", "==", search), orderBy(e.target.value));
+      let q = query(
+        acadQueueCollection,
+        where("name", "==", search),
+        orderBy(e.target.value)
+      );
       unsub = onSnapshot(q, (snapshot) =>
-        setSearchData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+        setSearchData(
+          snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        )
       );
     }
-    
+
     return unsub;
-  }
+  };
   const tableQuerySearch = async () => {
     checkPoint();
     let j = 0;
@@ -189,6 +205,7 @@ const Report = () => {
 
   const viewAll = () => {
     setTableMap(true);
+    tableQueryHistory();
   };
   const deleteSingleData = async (id) => {
     if (window.confirm("Are you sure you want to delete this transaction?")) {
@@ -275,6 +292,12 @@ const Report = () => {
     }
   };
 
+  const handleChangeTransaction = (e) => {
+    setSortTransaction(e.target.value);
+  };
+  const handlesortDate = (e) => {
+    setSortTransaction(e.target.value);
+  };
   return (
     <>
       <ThemeProvider theme={Theme}>
@@ -305,59 +328,286 @@ const Report = () => {
             alignItems: "center",
           }}
         >
-          <TextField
-            type="email"
-            id="Username"
-            label="Search"
-            required
-            onChange={(e) => {
-              setSearch(e.target.value);
-            }}
-            value={search}
-            color="pupMaroon"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    sx={{
-                      "&:hover": { backgroundColor: "#ffd700" },
-                    }}
+          {sort === "" && (
+            <>
+              <TextField
+                disabled
+                type="text"
+                id="name"
+                placeholder="Sort a Category first"
+                value={search}
+                color="pupMaroon"
+                sx={{
+                  width: {
+                    xs: "100%",
+                    md: "100%",
+                    lg: "95%",
+                  },
+                  bgcolor: "white",
+                }}
+              />
+            </>
+          )}
+          {sort === "name" && (
+            <>
+              <TextField
+                type="text"
+                id="name"
+                label="Search Name"
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                }}
+                value={search}
+                color="pupMaroon"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        sx={{
+                          "&:hover": { backgroundColor: "#ffd700" },
+                        }}
+                      >
+                        <SearchOutlined onClick={tableQuerySearch} />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  width: {
+                    xs: "100%",
+                    md: "100%",
+                    lg: "95%",
+                  },
+                  bgcolor: "white",
+                }}
+              />
+            </>
+          )}
+          {sort === "date" && (
+            <>
+              <Box
+                sx={{
+                  width: {
+                    xs: "100%",
+                    md: "100%",
+                    lg: "95%",
+                  },
+                  bgcolor: "white",
+                }}
+              >
+                <FormControl fullWidth>
+                  <InputLabel color="pupMaroon">Filter by date</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={sortDate}
+                    label="SortByDate"
+                    color="pupMaroon"
+                    onChange={handlesortDate}
                   >
-                    <SearchOutlined onClick={tableQuerySearch} />
-                  </IconButton>
-                </InputAdornment>
-
-              ),
-            }}
-            sx={{
-              width: {
-                xs: "100%",
-                md: "100%",
-                lg: "95%",
-              },
-              bgcolor: "white",
-            }}
-          />
-        </Box>
+                    <MenuItem value="day">By day</MenuItem>
+                    <MenuItem value="week">By Week</MenuItem>
+                    <MenuItem value="month">By Month</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+            </>
+          )}
+          {sort === "email" && (
+            <>
+              <TextField
+                type="email"
+                id="email"
+                label="Search email"
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                }}
+                value={search}
+                color="pupMaroon"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        sx={{
+                          "&:hover": { backgroundColor: "#ffd700" },
+                        }}
+                      >
+                        <SearchOutlined onClick={tableQuerySearch} />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  width: {
+                    xs: "100%",
+                    md: "100%",
+                    lg: "95%",
+                  },
+                  bgcolor: "white",
+                }}
+              />
+            </>
+          )}
+          {sort === "contact" && (
+            <>
+              <TextField
+                type="tel"
+                id="contact"
+                label="Search Contact"
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                }}
+                value={search}
+                color="pupMaroon"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        sx={{
+                          "&:hover": { backgroundColor: "#ffd700" },
+                        }}
+                      >
+                        <SearchOutlined onClick={tableQuerySearch} />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  width: {
+                    xs: "100%",
+                    md: "100%",
+                    lg: "95%",
+                  },
+                  bgcolor: "white",
+                }}
+              />
+            </>
+          )}
+          {sort === "studentNumber" && (
+            <>
+              <TextField
+                type="text"
+                id="studentNumber"
+                label="Search Student Number"
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                }}
+                value={search}
+                color="pupMaroon"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        sx={{
+                          "&:hover": { backgroundColor: "#ffd700" },
+                        }}
+                      >
+                        <SearchOutlined onClick={tableQuerySearch} />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  width: {
+                    xs: "100%",
+                    md: "100%",
+                    lg: "95%",
+                  },
+                  bgcolor: "white",
+                }}
+              />
+            </>
+          )}
+          {sort === "transaction" && (
+            <>
+              <FormControl
+                fullWidth
+                sx={{
+                  width: {
+                    xs: "100%",
+                    md: "100%",
+                    lg: "95%",
+                  },
+                  bgcolor: "white",
+                }}
+              >
+                <InputLabel color="pupMaroon">Filter by transaction</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={sortTransaction}
+                  label="SortBy"
+                  color="pupMaroon"
+                  onChange={handleChangeTransaction}
+                >
+                  {transactionsAcad.map((transaction) => (
+                    <MenuItem key={transaction} value={transaction}>
+                      {transaction}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </>
+          )}
+          {sort === "status" && (
+            <>
+              <TextField
+                type="text"
+                id="status"
+                label="Search Status"
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                }}
+                value={search}
+                color="pupMaroon"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        sx={{
+                          "&:hover": { backgroundColor: "#ffd700" },
+                        }}
+                      >
+                        <SearchOutlined onClick={tableQuerySearch} />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  width: {
+                    xs: "100%",
+                    md: "100%",
+                    lg: "95%",
+                  },
+                  bgcolor: "white",
+                }}
+              />
+            </>
+          )}
+          </Box>
         <Box mx={5} sx={{ display: "flex", justifyContent: "end" }}>
-        <label>Filter By:</label>
-        <select name="colValue1" onChange={handleChangeSort}>
-          <option> Please Select</option>
-          <option value="name">Name</option>
-          <option value="date">Date</option>
-          <option value="email">Email</option>
-          </select>
-        <label>Sorted By:</label>
-        <select name="colValue" onChange={handleChangeSort}>
-          <option> Please Select</option>
-          <option value="name">Name</option>
-          <option value="date">Date</option>
-          <option value="email">Email</option>
-          <option value="contact">Contact</option>
-          <option value="studentNumber">Student Number</option>
-          <option value="status">Status</option>
-        </select>
           <Stack spacing={1.5} direction="row">
+            <Box sx={{ minWidth: 180, bgcolor: "white" }}>
+              <FormControl fullWidth>
+                <InputLabel color="pupMaroon">Sort by</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={sort}
+                  label="SortBy"
+                  color="pupMaroon"
+                  onChange={handleChangeSort}
+                >
+                  <MenuItem value="name">Name</MenuItem>
+                  <MenuItem value="date">Date</MenuItem>
+                  <MenuItem value="email">Email</MenuItem>
+                  <MenuItem value="contact">Contact</MenuItem>
+                  <MenuItem value="studentNumber">Student Number</MenuItem>
+                  <MenuItem value="transaction">Transaction</MenuItem>
+                  <MenuItem value="status">Status</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
             <Button
               disable={isDisable}
               onClick={deleteAll}
@@ -455,7 +705,6 @@ const Report = () => {
                               {queue.transaction}
                             </TableCell>
                           </Tooltip>{" "}
-
                           <TableCell>{queue.name}</TableCell>
                           <TableCell>{queue.studentNumber}</TableCell>
                           <TableCell>{queue.email}</TableCell>
