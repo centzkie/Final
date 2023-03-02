@@ -113,6 +113,7 @@ const Report = () => {
     content: () => printRef.current,
     documentTitle: "Summary Report PDF",
   });
+
   useEffect(() => {
     if (
       localStorage.getItem("Password") !== "admin" &&
@@ -142,6 +143,25 @@ const Report = () => {
     );
     return unsub;
   };
+  const handleChangeSort = async(e)=>{
+    let unsub;
+    if(tableMap){
+      let acadQueueCollection = collection(db, "acadSummaryreport");
+      let q = query(acadQueueCollection, orderBy(e.target.value));
+      unsub = onSnapshot(q, (snapshot) =>
+        setQluserData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+      );
+    }
+    else{
+      let acadQueueCollection = collection(db, "acadSummaryreport");
+      let q = query(acadQueueCollection,where("name", "==", search), orderBy(e.target.value));
+      unsub = onSnapshot(q, (snapshot) =>
+        setSearchData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+      );
+    }
+    
+    return unsub;
+  }
   const tableQuerySearch = async () => {
     checkPoint();
     let j = 0;
@@ -306,6 +326,7 @@ const Report = () => {
                     <SearchOutlined onClick={tableQuerySearch} />
                   </IconButton>
                 </InputAdornment>
+
               ),
             }}
             sx={{
@@ -319,6 +340,23 @@ const Report = () => {
           />
         </Box>
         <Box mx={5} sx={{ display: "flex", justifyContent: "end" }}>
+        <label>Filter By:</label>
+        <select name="colValue1" onChange={handleChangeSort}>
+          <option> Please Select</option>
+          <option value="name">Name</option>
+          <option value="date">Date</option>
+          <option value="email">Email</option>
+          </select>
+        <label>Sorted By:</label>
+        <select name="colValue" onChange={handleChangeSort}>
+          <option> Please Select</option>
+          <option value="name">Name</option>
+          <option value="date">Date</option>
+          <option value="email">Email</option>
+          <option value="contact">Contact</option>
+          <option value="studentNumber">Student Number</option>
+          <option value="status">Status</option>
+        </select>
           <Stack spacing={1.5} direction="row">
             <Button
               disable={isDisable}

@@ -95,13 +95,13 @@ const AdminQueueline = () => {
       const snapshot = await getCountFromServer(coll);
       check = snapshot.data().count;
 
-      if (check >= 2) {
+      if (check >=1) {
         setIsDisable(true);
-      } else if (check <= 1) {
+      } else if (check < 1) {
         setIsDisable(false);
       }
     };
-    const intervalId = setInterval(checkTime, 3000);
+    const intervalId = setInterval(checkTime, 1000);
     return () => clearInterval(intervalId);
   }, []);
 

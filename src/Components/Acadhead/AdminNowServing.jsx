@@ -80,7 +80,7 @@ const styleTableBody = createTheme({
 const AdminNowServing = () => {
   const [qlUserData, setQluserData] = useState([]);
   const [qlCurrentPage, setQlCurrentPost] = useState(1);
-  const QlPostPerPage = 2;
+  const QlPostPerPage = 1;
   let pages = [];
 
   const lastPostIndex = qlCurrentPage * QlPostPerPage;
