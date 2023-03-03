@@ -91,7 +91,8 @@ const AdminQueueline = () => {
   useEffect(() => {
     const checkTime = async () => {
       let check = 0;
-      const coll = collection(db, "acadNowserving");
+      const coll = query(collection(db, "acadNowserving"),
+      where("admin","==",localStorage.getItem("Username")));
       const snapshot = await getCountFromServer(coll);
       check = snapshot.data().count;
 

@@ -148,6 +148,7 @@ const Archive = () => {
       ticket: snapshot.data().ticket,
       timestamp: snapshot.data().timestamp,
       date: snapshot.data().date,
+      admin: snapshot.data().admin
     });
     const userDoc = doc(db, "regArchieve", id);
     await deleteDoc(userDoc);
@@ -220,6 +221,7 @@ const Archive = () => {
             ticket: snapshot.data().ticket,
             timestamp: snapshot.data().timestamp,
             date: snapshot.data().date,
+            admin: snapshot.data().admin
           }),
           await deleteDoc(doc(db, "regArchieve", queue.id))
         )
@@ -242,6 +244,7 @@ const Archive = () => {
             ticket: snapshot.data().ticket,
             timestamp: snapshot.data().timestamp,
             date: snapshot.data().date,
+            admin: snapshot.data().admin
           }),
           await deleteDoc(doc(db, "regArchieve", queue.id))
         )
@@ -366,6 +369,7 @@ const Archive = () => {
                     <TableCell>Name</TableCell>
                     <TableCell>Student Number</TableCell>
                     <TableCell>Email</TableCell>
+                    <TableCell>Counter</TableCell>
                     <TableCell>Type of User</TableCell>
                     <TableCell>Year&Section</TableCell>
                     <TableCell>Contact Number</TableCell>
@@ -425,6 +429,7 @@ const Archive = () => {
                           <TableCell>{queue.name}</TableCell>
                           <TableCell>{queue.studentNumber}</TableCell>
                           <TableCell>{queue.email}</TableCell>
+                          <TableCell>{queue.admin}</TableCell>
                           <TableCell>{queue.userType}</TableCell>
                           <TableCell>{queue.yearSection}</TableCell>
                           <TableCell>{queue.contact}</TableCell>
@@ -488,6 +493,7 @@ const Archive = () => {
                           <TableCell>{queue.name}</TableCell>
                           <TableCell>{queue.studentNumber}</TableCell>
                           <TableCell>{queue.email}</TableCell>
+                          <TableCell>{queue.admin}</TableCell>
                           <TableCell>{queue.userType}</TableCell>
                           <TableCell>{queue.yearSection}</TableCell>
                           <TableCell>{queue.contact}</TableCell>

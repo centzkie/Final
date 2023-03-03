@@ -148,6 +148,7 @@ const Archive = () => {
       ticket: snapshot.data().ticket,
       timestamp: snapshot.data().timestamp,
       date: snapshot.data().date,
+      counter: snapshot.data().counter
     });
     const userDoc = doc(db, "acadArchieve", id);
     await deleteDoc(userDoc);
@@ -220,6 +221,7 @@ const Archive = () => {
             ticket: snapshot.data().ticket,
             timestamp: snapshot.data().timestamp,
             date: snapshot.data().date,
+            counter: snapshot.data().counter,
           }),
           await deleteDoc(doc(db, "acadArchieve", queue.id))
         )
@@ -242,6 +244,7 @@ const Archive = () => {
             ticket: snapshot.data().ticket,
             timestamp: snapshot.data().timestamp,
             date: snapshot.data().date,
+            counter: snapshot.data().counter,
           }),
           await deleteDoc(doc(db, "acadArchieve", queue.id))
         )
@@ -265,7 +268,7 @@ const Archive = () => {
                 sx={{ flexGrow: 1 }}
                 color="white"
               >
-                Archives
+                Archive
               </Typography>
             </Toolbar>
           </AppBar>
@@ -361,12 +364,13 @@ const Archive = () => {
                     </TableCell>
 
                     <TableCell>Status</TableCell>
+                    <TableCell>Name</TableCell>
                     <TableCell>Date</TableCell>
                     <TableCell>Ticket</TableCell>
                     <TableCell>Transaction</TableCell>
-                    <TableCell>Name</TableCell>
                     <TableCell>Student Number</TableCell>
                     <TableCell>Email</TableCell>
+                    <TableCell>Counter</TableCell>
                     <TableCell>Type of User</TableCell>
                     <TableCell>Year&Section</TableCell>
                     <TableCell>Contact Number</TableCell>
@@ -416,6 +420,7 @@ const Archive = () => {
                             </Stack>
                           </TableCell>
                           <TableCell>{queue.status}</TableCell>
+                          <TableCell>{queue.name}</TableCell>
                           <TableCell>{queue.date}</TableCell>
                           <TableCell align="right" sx={{ fontWeight: "bold" }}>
                             {queue.ticket}
@@ -423,9 +428,9 @@ const Archive = () => {
                           <Tooltip title={queue.transaction} arrow>
                             <TableCell>{queue.transaction}</TableCell>
                           </Tooltip>
-                          <TableCell>{queue.name}</TableCell>
                           <TableCell>{queue.studentNumber}</TableCell>
                           <TableCell>{queue.email}</TableCell>
+                          <TableCell>{queue.counter}</TableCell>
                           <TableCell>{queue.userType}</TableCell>
                           <TableCell>{queue.yearSection}</TableCell>
                           <TableCell>{queue.contact}</TableCell>
@@ -479,6 +484,7 @@ const Archive = () => {
                             </Stack>
                           </TableCell>
                           <TableCell>{queue.status}</TableCell>
+                          <TableCell>{queue.name}</TableCell>
                           <TableCell>{queue.date}</TableCell>
                           <TableCell align="right" sx={{ fontWeight: "bold" }}>
                             {queue.ticket}
@@ -486,9 +492,9 @@ const Archive = () => {
                           <Tooltip title={queue.transaction} arrow>
                             <TableCell>{queue.transaction}</TableCell>
                           </Tooltip>
-                          <TableCell>{queue.name}</TableCell>
                           <TableCell>{queue.studentNumber}</TableCell>
                           <TableCell>{queue.email}</TableCell>
+                          <TableCell>{queue.counter}</TableCell>
                           <TableCell>{queue.userType}</TableCell>
                           <TableCell>{queue.yearSection}</TableCell>
                           <TableCell>{queue.contact}</TableCell>

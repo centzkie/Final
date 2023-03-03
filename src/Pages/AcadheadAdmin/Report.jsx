@@ -102,17 +102,18 @@ const Report = () => {
   const [searchData, setSearchData] = useState("");
   const [tableMap, setTableMap] = useState(true);
   const [search, setSearch] = useState("");
+  const [searchDate, setSearchDate] = useState("");
   const [checked, setChecked] = useState(true);
   const [sortTransaction, setSortTransaction] = useState("");
   const [isDisable, setIsDisable] = useState(true);
   const [sort, setSort] = useState("");
-  const [sortDate, setSortDate] = useState("");
   const current = new Date();
-  const [date, setDate] = useState(
-    `${current.getDate()}/${
-      current.getMonth() + 1
+  const [date, setDate] = useState(`${current.getDate()}/${current.getMonth() + 1
     }/${current.getFullYear()}-${current.toLocaleTimeString("en-US")}`
   );
+  let day = `${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()}`;
+  let month =(current.getMonth() + 1) + "/" + current.getFullYear();
+  let year = current.getFullYear();
 
   const userCollectionArchieve = collection(db, "acadArchieve");
   const navigate = useNavigate();
@@ -143,69 +144,51 @@ const Report = () => {
     );
     return unsub;
   };
-  const checkPoint = async () => {
-    let acadQueueCollection = collection(db, "acadSummaryreport");
-    let q = query(acadQueueCollection, where("name", "==", search));
-    let unsub = onSnapshot(q, (snapshot) =>
-      setSearchData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
-    );
-    return unsub;
-  };
+ 
   const handleChangeSort = async (e) => {
     let unsub;
-    setSort(e.target.value);
-    if (tableMap) {
-      let acadQueueCollection = collection(db, "acadSummaryreport");
-      let q = query(acadQueueCollection, orderBy(e.target.value));
-      unsub = onSnapshot(q, (snapshot) =>
-        setQluserData(
-          snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-        )
-      );
-    } else {
-      let acadQueueCollection = collection(db, "acadSummaryreport");
-      let q = query(
-        acadQueueCollection,
-        where("name", "==", search),
-        orderBy(e.target.value)
-      );
-      unsub = onSnapshot(q, (snapshot) =>
-        setSearchData(
-          snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-        )
-      );
-    }
+    setTableMap(true)
+    setSort(e.target.value)
+    setSearch("");
 
     return unsub;
   };
   const tableQuerySearch = async () => {
-    checkPoint();
+    let acadQueueCollection = collection(db, "acadSummaryreport");
+    let q = query(acadQueueCollection, where(sort, "==", search));
+    let unsub = onSnapshot(q, (snapshot) =>
+      setSearchData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    );
+    
     let j = 0;
-    let q = query(
+    q = query(
       collection(db, "acadSummaryreport"),
-      where("name", "==", search)
+      where(sort, "==", search)
     );
     let querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       j++;
     });
     if (search.length === 0) {
-      alert("Please fill required field");
+      alert("Please input data");
+      setTableMap(true);
     } else {
       if (j === 0) {
+        alert(sort + " not found");
         setTableMap(true);
-        setIsDisable(true);
-        alert("No data found");
       } else {
         setTableMap(false);
-        setIsDisable(false);
       }
     }
+    return unsub;
   };
 
   const viewAll = () => {
     setTableMap(true);
     tableQueryHistory();
+    setSort("");
+    setSearch("");
+    setSearchDate("");
   };
   const deleteSingleData = async (id) => {
     if (window.confirm("Are you sure you want to delete this transaction?")) {
@@ -224,6 +207,7 @@ const Report = () => {
         ticket: snapshot.data().ticket,
         timestamp: snapshot.data().timestamp,
         date: snapshot.data().date,
+        counter: snapshot.data().counter
       });
 
       const userDoc = doc(db, "acadSummaryreport", id);
@@ -263,6 +247,7 @@ const Report = () => {
             ticket: snapshot.data().ticket,
             timestamp: snapshot.data().timestamp,
             date: snapshot.data().date,
+            counter: snapshot.data().counter,
           }),
           await deleteDoc(doc(db, "acadSummaryreport", queue.id))
         )
@@ -285,6 +270,7 @@ const Report = () => {
             ticket: snapshot.data().ticket,
             timestamp: snapshot.data().timestamp,
             date: snapshot.data().date,
+            counter: snapshot.data().counter,
           }),
           await deleteDoc(doc(db, "acadSummaryreport", queue.id))
         )
@@ -295,8 +281,53 @@ const Report = () => {
   const handleChangeTransaction = (e) => {
     setSortTransaction(e.target.value);
   };
-  const handlesortDate = (e) => {
-    setSortTransaction(e.target.value);
+  const handleChangeDate = (e) => {
+    let filter = e.target.value;
+    let document = "";
+    setSearchData(qlUserData);
+    setSearchDate(e.target.value);
+    if(filter === day){
+      document="day";
+    }
+    else if(filter === month){
+      document="month";
+    }
+    else if(filter === year){
+      document="year";
+    }
+    console.log(document + " " + filter);
+    let acadQueueCollection = collection(db, "acadSummaryreport");
+    let q = query(acadQueueCollection, where(document, "==", filter));
+    let unsub = onSnapshot(q, (snapshot) =>
+      setSearchData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    );
+    setTableMap(false);
+
+    return unsub;
+  };
+  const handleChangeStatus = (e) => {
+    let filter = e.target.value;
+    setSearchData(qlUserData);
+    setSearch(e.target.value);
+    if(sort==="date"){
+      if(filter === "day"){
+      setSearch(`${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()}`);
+      }
+      else if(sort === "month"){
+        setSearch((current.getMonth() + 1) + "/" + current.getFullYear());
+      }
+      else if(sort === "year"){
+        setSearch(current.getFullYear());
+      }
+    }
+    let acadQueueCollection = collection(db, "acadSummaryreport");
+    let q = query(acadQueueCollection, where(sort, "==", filter));
+    let unsub = onSnapshot(q, (snapshot) =>
+      setSearchData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    );
+    setTableMap(false);
+
+    return unsub;
   };
   return (
     <>
@@ -334,7 +365,7 @@ const Report = () => {
                 disabled
                 type="text"
                 id="name"
-                placeholder="Sort a Category first"
+                placeholder="-Select filter data first-"
                 value={search}
                 color="pupMaroon"
                 sx={{
@@ -400,14 +431,14 @@ const Report = () => {
                   <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
-                    value={sortDate}
+                    value={searchDate}
                     label="SortByDate"
                     color="pupMaroon"
-                    onChange={handlesortDate}
+                    onChange={handleChangeDate}
                   >
-                    <MenuItem value="day">By day</MenuItem>
-                    <MenuItem value="week">By Week</MenuItem>
-                    <MenuItem value="month">By Month</MenuItem>
+                    <MenuItem value={day}>This Day</MenuItem>
+                    <MenuItem value={month}>This Month</MenuItem>
+                    <MenuItem value={year}>This Year</MenuItem>
                   </Select>
                 </FormControl>
               </Box>
@@ -518,10 +549,9 @@ const Report = () => {
               />
             </>
           )}
-          {sort === "transaction" && (
+          {sort === "status" && (
             <>
-              <FormControl
-                fullWidth
+              <Box
                 sx={{
                   width: {
                     xs: "100%",
@@ -531,48 +561,26 @@ const Report = () => {
                   bgcolor: "white",
                 }}
               >
-                <InputLabel color="pupMaroon">Filter by transaction</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={sortTransaction}
-                  label="SortBy"
-                  color="pupMaroon"
-                  onChange={handleChangeTransaction}
-                >
-                  {transactionsAcad.map((transaction) => (
-                    <MenuItem key={transaction} value={transaction}>
-                      {transaction}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                <FormControl fullWidth>
+                  <InputLabel color="pupMaroon">Filter by Status</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={search}
+                    label="SortByStatus"
+                    color="pupMaroon"
+                    onChange={handleChangeStatus}
+                  >
+                    <MenuItem value="Complete">Complete</MenuItem>
+                    <MenuItem value="Incomplete">Incomplete</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
             </>
           )}
-          {sort === "status" && (
+          {sort === "counter" && (
             <>
-              <TextField
-                type="text"
-                id="status"
-                label="Search Status"
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                }}
-                value={search}
-                color="pupMaroon"
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        sx={{
-                          "&:hover": { backgroundColor: "#ffd700" },
-                        }}
-                      >
-                        <SearchOutlined onClick={tableQuerySearch} />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
+              <Box
                 sx={{
                   width: {
                     xs: "100%",
@@ -581,15 +589,31 @@ const Report = () => {
                   },
                   bgcolor: "white",
                 }}
-              />
+              >
+                <FormControl fullWidth>
+                  <InputLabel color="pupMaroon">Filter Transacted By</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={search}
+                    label="SortByCounter"
+                    color="pupMaroon"
+                    onChange={handleChangeStatus}
+                  >
+                    <MenuItem value="Katherine Khay Castro">Counter 1</MenuItem>
+                    <MenuItem value="Ambeth Casimiro">Counter 2</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
             </>
           )}
+           
           </Box>
         <Box mx={5} sx={{ display: "flex", justifyContent: "end" }}>
           <Stack spacing={1.5} direction="row">
             <Box sx={{ minWidth: 180, bgcolor: "white" }}>
               <FormControl fullWidth>
-                <InputLabel color="pupMaroon">Sort by</InputLabel>
+                <InputLabel color="pupMaroon">Filter by</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
@@ -603,8 +627,8 @@ const Report = () => {
                   <MenuItem value="email">Email</MenuItem>
                   <MenuItem value="contact">Contact</MenuItem>
                   <MenuItem value="studentNumber">Student Number</MenuItem>
-                  <MenuItem value="transaction">Transaction</MenuItem>
                   <MenuItem value="status">Status</MenuItem>
+                  <MenuItem value="counter">Transacted By</MenuItem>
                 </Select>
               </FormControl>
             </Box>
@@ -650,10 +674,10 @@ const Report = () => {
                       Action
                     </TableCell>
                     <TableCell>Status</TableCell>
+                    <TableCell>Name</TableCell>
                     <TableCell>Date</TableCell>
                     <TableCell>Ticket</TableCell>
                     <TableCell>Transaction</TableCell>
-                    <TableCell>Name</TableCell>
                     <TableCell>Student Number</TableCell>
                     <TableCell>Email</TableCell>
                     <TableCell>Counter</TableCell>
@@ -689,6 +713,7 @@ const Report = () => {
                             </IconButton>
                           </TableCell>
                           <TableCell>{queue.status}</TableCell>
+                          <TableCell>{queue.name}</TableCell>
                           <TableCell>{queue.date}</TableCell>
                           <TableCell align="right" sx={{ fontWeight: "bold" }}>
                             {queue.ticket}
@@ -705,7 +730,6 @@ const Report = () => {
                               {queue.transaction}
                             </TableCell>
                           </Tooltip>{" "}
-                          <TableCell>{queue.name}</TableCell>
                           <TableCell>{queue.studentNumber}</TableCell>
                           <TableCell>{queue.email}</TableCell>
                           <TableCell>{queue.counter}</TableCell>
@@ -736,6 +760,7 @@ const Report = () => {
                             </IconButton>
                           </TableCell>
                           <TableCell>{queue.status}</TableCell>
+                          <TableCell>{queue.name}</TableCell>
                           <TableCell>{queue.date}</TableCell>
                           <TableCell align="right" sx={{ fontWeight: "bold" }}>
                             {queue.ticket}
@@ -752,7 +777,6 @@ const Report = () => {
                               {queue.transaction}
                             </TableCell>
                           </Tooltip>
-                          <TableCell>{queue.name}</TableCell>
                           <TableCell>{queue.studentNumber}</TableCell>
                           <TableCell>{queue.email}</TableCell>
                           <TableCell>{queue.counter}</TableCell>

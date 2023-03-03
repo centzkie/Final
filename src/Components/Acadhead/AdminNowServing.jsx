@@ -96,6 +96,11 @@ const AdminNowServing = () => {
       current.getMonth() + 1
     }/${current.getFullYear()} - ${current.toLocaleTimeString("en-US")}`
   );
+  const [day, setDay] = useState(
+    `${current.getDate()}/${
+      current.getMonth() + 1
+    }/${current.getFullYear()}`
+  );
 
   for (let i = 1; i <= Math.ceil(qlUserData.length / QlPostPerPage); i++) {
     pages.push(i);
@@ -124,7 +129,7 @@ const AdminNowServing = () => {
   const moveToHistorycomplete = async (id) => {
     let admin = "";
     if(localStorage.getItem("Username")==="adminacad1"){
-      admin = "Ms. Katherine Khay Castro";
+      admin = "Katherine Khay Castro";
     }
     else{
       admin = "Ambeth Casimiro";
@@ -144,7 +149,10 @@ const AdminNowServing = () => {
       ticket: snapshot.data().ticket,
       timestamp: serverTimestamp(),
       date: date,
-      counter: admin
+      counter: admin,
+      day: day,
+      month: (current.getMonth() + 1) + "/" + current.getFullYear(),
+      year: current.getFullYear()
     });
     directDeleteUser(id);
   };
@@ -152,7 +160,7 @@ const AdminNowServing = () => {
   const moveToHistoryincomplete = async (id) => {
     let admin = "";
     if(localStorage.getItem("Username")==="adminacad1"){
-      admin = "Ms. Katherine Khay Castro";
+      admin = "Katherine Khay Castro";
     }
     else{
       admin = "Ambeth Casimiro";
@@ -172,7 +180,10 @@ const AdminNowServing = () => {
       ticket: snapshot.data().ticket,
       timestamp: serverTimestamp(),
       date: date,
-      counter: admin
+      counter: admin,
+      day: day,
+      month: (current.getMonth() + 1) + "/" + current.getFullYear(),
+      year: current.getFullYear()
     });
     directDeleteUser(id);
   };

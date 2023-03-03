@@ -120,13 +120,14 @@ const Form = () => {
 
   // Dropdown textbox handle
   const handleChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setTransaction(
-      // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
-    );
+    setTransaction(event.target.value);
+    // const {
+    //   target: { value },
+    // } = event;
+    // setTransaction(
+    //   // On autofill we get a stringified value.
+    //   typeof value === "string" ? value.split(",") : value
+    // );
   };
 
   // Function only numbers can accept

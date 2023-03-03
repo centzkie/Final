@@ -108,7 +108,8 @@ const AdminSkip = () => {
   useEffect(() => {
     const checkTime = async () => {
       let check = 0;
-      const coll = collection(db, "acadNowserving");
+      const coll = query(collection(db, "acadNowserving"),
+      where("admin","==",localStorage.getItem("Username")));
       const snapshot = await getCountFromServer(coll);
       check = snapshot.data().count;
 
@@ -160,7 +161,7 @@ const AdminSkip = () => {
   const moveUserToHistory = async (id) => {
     let admin = "";
     if(localStorage.getItem("Username")==="adminacad1"){
-      admin = "Ms. Katherine Khay Castro";
+      admin = "Katherine Khay Castro";
     }
     else{
       admin = "Ambeth Casimiro";
@@ -180,7 +181,10 @@ const AdminSkip = () => {
       ticket: snapshot.data().ticket,
       timestamp: serverTimestamp(),
       date: date,
-      counter: admin
+      counter: admin,
+      day: day,
+      month: (current.getMonth() + 1) + "/" + current.getFullYear(),
+      year: current.getFullYear()
     });
     directDeleteUser(id);
   };
