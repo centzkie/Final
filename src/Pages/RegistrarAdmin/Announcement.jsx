@@ -94,7 +94,7 @@ const Announcement = () => {
           ) {
             navigate("/admin");
       }
-    };
+  };
     
     const intervalId = setInterval(checkTime, 3000);
 
