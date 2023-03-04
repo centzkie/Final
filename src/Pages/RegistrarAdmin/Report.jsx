@@ -112,14 +112,23 @@ const Report = () => {
     content: () => printRef.current,
     documentTitle: "Summary Report PDF",
   });
+  
   useEffect(() => {
-    if (
-      localStorage.getItem("Password1") !== "admin" &&
-      localStorage.getItem("Username1") !== "adminareg"
-    ) {
-      navigate("/admin");
-    }
-  });
+    const checkTime = async() => {
+      if (
+            (localStorage.getItem("Password") !== "admin" &&
+              localStorage.getItem("Username") !== "adminacad1") ||
+            (localStorage.getItem("Password") !== "admin" &&
+              localStorage.getItem("Username") !== "adminacad2")
+          ) {
+            navigate("/admin");
+      }
+    };
+    
+    const intervalId = setInterval(checkTime, 3000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   useEffect(() => {
     tableQueryHistory();

@@ -94,7 +94,7 @@ const GenerateAcad = () => {
               marginTop: { lg: "100px", md: "80px", sm: "60px", xs: "40px" },
             }}
           >
-            Queue Line Ticket Number
+            Transaction Number
           </Typography>
           <Typography
             sx={{

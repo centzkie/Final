@@ -77,7 +77,7 @@ const Form = () => {
   useEffect(() => {
     const checkTime = () => {
       let currentTime = moment().tz(timezone);
-      let startTime = moment.tz("08:00", "HH:mm a", timezone);
+      let startTime = moment.tz("01:00", "HH:mm a", timezone);
       let endTime = moment.tz("24:00", "HH:mm a", timezone);
 
       if (currentTime.isBetween(startTime, endTime)) {
@@ -92,21 +92,7 @@ const Form = () => {
   }, []);
 
   useEffect(() => {
-    const checkTime = async () => {
-      //count();
-    };
-
-    const intervalId = setInterval(checkTime, 5000);
-
-    return () => clearInterval(intervalId);
-  }, []);
-
-  useEffect(() => {
     if (sessionStorage.getItem("Auth") === "false") {
-      //navigate("/");
-    }
-    if (countData === 5) {
-      alert("Slot full");
       navigate("/");
     }
   });
@@ -120,14 +106,13 @@ const Form = () => {
 
   // Dropdown textbox handle
   const handleChange = (event) => {
-    setTransaction(event.target.value);
-    // const {
-    //   target: { value },
-    // } = event;
-    // setTransaction(
-    //   // On autofill we get a stringified value.
-    //   typeof value === "string" ? value.split(",") : value
-    // );
+    const {
+      target: { value },
+    } = event;
+    setTransaction(
+      // On autofill we get a stringified value.
+      typeof value === "string" ? value.split(", ") : value
+    );
   };
 
   // Function only numbers can accept

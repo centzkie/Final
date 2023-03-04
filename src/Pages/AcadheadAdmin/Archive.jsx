@@ -133,7 +133,8 @@ const Archive = () => {
   };
 
   const deleteSingleData = async (id) => {
-    const docRef = doc(db, "acadArchieve", id);
+    if(window.confirm("Are you sure want to restore?")){
+      const docRef = doc(db, "acadArchieve", id);
     const snapshot = await getDoc(docRef);
     await addDoc(userCollectionSummaryreport, {
       status: snapshot.data().status,
@@ -148,10 +149,14 @@ const Archive = () => {
       ticket: snapshot.data().ticket,
       timestamp: snapshot.data().timestamp,
       date: snapshot.data().date,
-      counter: snapshot.data().counter
+      counter: snapshot.data().counter,
+      day: snapshot.data().day,
+      month: snapshot.data().month,
+      year: snapshot.data().year
     });
     const userDoc = doc(db, "acadArchieve", id);
     await deleteDoc(userDoc);
+    }
   };
 
   const deletePermanentSingleData = async (id) => {
@@ -178,14 +183,23 @@ const Archive = () => {
   };
 
   const navigate = useNavigate();
+  
   useEffect(() => {
-    if (
-      localStorage.getItem("Password") !== "admin" &&
-      localStorage.getItem("Username") !== "adminacad"
-    ) {
-      navigate("/admin");
-    }
-  });
+    const checkTime = async() => {
+      if (
+            (localStorage.getItem("Password") !== "admin" &&
+              localStorage.getItem("Username") !== "adminacad1") ||
+            (localStorage.getItem("Password") !== "admin" &&
+              localStorage.getItem("Username") !== "adminacad2")
+          ) {
+            navigate("/admin");
+      }
+    };
+    
+    const intervalId = setInterval(checkTime, 3000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   useEffect(() => {
     tableQueryArchive();
@@ -200,7 +214,8 @@ const Archive = () => {
     return unsub;
   };
   const restoreAll = async () => {
-    let docRef = doc(db, "acadArchieve", "ddwd");
+    if(window.confirm("Are you sure you want to restore all?")){
+      let docRef = doc(db, "acadArchieve", "ddwd");
     let snapshot = await getDoc(docRef);
 
     if (searchData.length === 0) {
@@ -222,6 +237,9 @@ const Archive = () => {
             timestamp: snapshot.data().timestamp,
             date: snapshot.data().date,
             counter: snapshot.data().counter,
+            day: snapshot.data().day,
+            month: snapshot.data().month,
+            year: snapshot.data().year
           }),
           await deleteDoc(doc(db, "acadArchieve", queue.id))
         )
@@ -245,10 +263,14 @@ const Archive = () => {
             timestamp: snapshot.data().timestamp,
             date: snapshot.data().date,
             counter: snapshot.data().counter,
+            day: snapshot.data().day,
+            month: snapshot.data().month,
+            year: snapshot.data().year
           }),
           await deleteDoc(doc(db, "acadArchieve", queue.id))
         )
       );
+    }
     }
   };
 
@@ -336,7 +358,7 @@ const Archive = () => {
               Delete All
             </Button>
             <Button onClick={viewAll} variant="outlined" color="pupMaroon">
-              Refresh
+              View All
             </Button>
           </Stack>
         </Box>

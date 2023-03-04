@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Stack,
@@ -18,7 +18,7 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import Appbar from "../Components/Landing/Appbar";
 import Footer from "../Components/Landing/Footer";
 import { db } from "../firebase-config";
-import { collection, query, getDocs, where } from "firebase/firestore";
+import { collection, query, getDocs, where, getCountFromServer } from "firebase/firestore";
 
 import Usertable from "../Components/Acadhead/Usertable";
 import waves from "../Img/wave.svg";
@@ -32,6 +32,12 @@ const TransactionAcad = () => {
   let [transactions, setTransactions] = useState("");
   let [ticket, setTicket] = useState("");
   let filters = "";
+  let [aheadTicket, setAheadTicket] = useState(0);
+  //let [fetchCount, setFetchcount] = useState(0);
+  let hold = 0;
+  let k = 0;
+  let l = 0;
+  let m = 0;
 
   const searchUser = async () => {
     let j = 0;
@@ -72,28 +78,28 @@ const TransactionAcad = () => {
       j++;
     });
 
-    q = query(collection(db, "acadQueuing"), where("email", "==", search));
+    q = query(collection(db, "acadQueuing"), where("contact", "==", search));
     querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       filters = (doc.id, " => ", doc.data());
       j++;
     });
 
-    q = query(collection(db, "acadNowserving"), where("email", "==", search));
+    q = query(collection(db, "acadNowserving"), where("contact", "==", search));
     querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       filters = (doc.id, " => ", doc.data());
       j++;
     });
 
-    q = query(collection(db, "acadSkip"), where("email", "==", search));
+    q = query(collection(db, "acadSkip"), where("contact", "==", search));
     querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       filters = (doc.id, " => ", doc.data());
       j++;
     });
 
-    q = query(collection(db, "acadPriority"), where("email", "==", search));
+    q = query(collection(db, "acadPriority"), where("contact", "==", search));
     querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       filters = (doc.id, " => ", doc.data());

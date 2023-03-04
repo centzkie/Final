@@ -98,7 +98,15 @@ const AdminSkip = () => {
   const currentPost = userData.slice(firstPostIndex, lastPostIndex);
 
   const [date, setDate] = useState(
-    `${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()}`
+    `${current.getDate()}/${
+      current.getMonth() + 1
+    }/${current.getFullYear()} - ${current.toLocaleTimeString("en-US")}`
+  );
+  
+  const [day, setDay] = useState(
+    `${current.getDate()}/${
+      current.getMonth() + 1
+    }/${current.getFullYear()}`
   );
 
   useEffect(() => {
@@ -154,7 +162,7 @@ const AdminSkip = () => {
       yearSection: snapshot.data().yearSection,
       ticket: snapshot.data().ticket,
       timestamp: serverTimestamp(),
-      admin: localStorage.getItem("Username")
+      admin: localStorage.getItem("Username"),
     });
     directDeleteUser(id);
   };

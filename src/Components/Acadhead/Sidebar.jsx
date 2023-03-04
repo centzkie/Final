@@ -52,13 +52,6 @@ const sidelogo = createTheme({
 const Sidebar = () => {
   const [show, setShow] = useState(false);
   const navigate = useNavigate();
-  let admin = "";
-  if(localStorage.getItem("Username") === "adminacad1"){
-    admin = "Counter 1";
-  }
-  else{
-    admin = "Counter 2";
-  }
 
   const acadHeadcontroll = () => {
     navigate("/acad-head-controll");
@@ -99,9 +92,6 @@ const Sidebar = () => {
             setShow(false);
           }}
         >
-          <label>
-            {admin}
-          </label>
           <Box width="350px" textAlign="center" role="presentation">
             <Box p={3}>
               <ThemeProvider theme={sidelogo}>

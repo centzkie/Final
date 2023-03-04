@@ -85,14 +85,24 @@ const Announcement = () => {
   const announceCollection = collection(db, "acadAnnouncement");
   const [userData, setUserData] = useState([]);
   const navigate = useNavigate();
+  
   useEffect(() => {
-    if (
-      localStorage.getItem("Password") !== "admin" &&
-      localStorage.getItem("Username") !== "adminacad"
-    ) {
-      navigate("/admin");
-    }
-  });
+    const checkTime = async() => {
+      if (
+            (localStorage.getItem("Password") !== "admin" &&
+              localStorage.getItem("Username") !== "adminacad1") ||
+            (localStorage.getItem("Password") !== "admin" &&
+              localStorage.getItem("Username") !== "adminacad2")
+          ) {
+            navigate("/admin");
+      }
+    };
+    
+    const intervalId = setInterval(checkTime, 3000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   const insert = async () => {
     if (announce.length > 0) {
       if (window.confirm("Are you sure you wish to add this announcement ?")) {
@@ -112,8 +122,10 @@ const Announcement = () => {
   }, []);
 
   const directDelete = async (email) => {
-    const userDoc = doc(db, "acadAnnouncement", email);
+    if(window.confirm("Are you sure want to delete this Announcement?")){
+      const userDoc = doc(db, "acadAnnouncement", email);
     await deleteDoc(userDoc);
+    }
   };
 
   // Announcement Table

@@ -124,13 +124,21 @@ const Report = () => {
   });
 
   useEffect(() => {
-    if (
-      localStorage.getItem("Password") !== "admin" &&
-      localStorage.getItem("Username") !== "adminacad"
-    ) {
-      navigate("/admin");
-    }
-  });
+    const checkTime = async() => {
+      if (
+            (localStorage.getItem("Password") !== "admin" &&
+              localStorage.getItem("Username") !== "adminacad1") ||
+            (localStorage.getItem("Password") !== "admin" &&
+              localStorage.getItem("Username") !== "adminacad2")
+          ) {
+            navigate("/admin");
+      }
+    };
+    
+    const intervalId = setInterval(checkTime, 3000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   useEffect(() => {
     tableQueryHistory();
@@ -207,7 +215,10 @@ const Report = () => {
         ticket: snapshot.data().ticket,
         timestamp: snapshot.data().timestamp,
         date: snapshot.data().date,
-        counter: snapshot.data().counter
+        counter: snapshot.data().counter,
+        day: snapshot.data().day,
+        month: snapshot.data().month,
+        year: snapshot.data().year
       });
 
       const userDoc = doc(db, "acadSummaryreport", id);
@@ -248,6 +259,9 @@ const Report = () => {
             timestamp: snapshot.data().timestamp,
             date: snapshot.data().date,
             counter: snapshot.data().counter,
+            day: snapshot.data().day,
+            month: snapshot.data().month,
+            year: snapshot.data().year
           }),
           await deleteDoc(doc(db, "acadSummaryreport", queue.id))
         )
@@ -271,6 +285,9 @@ const Report = () => {
             timestamp: snapshot.data().timestamp,
             date: snapshot.data().date,
             counter: snapshot.data().counter,
+            day: snapshot.data().day,
+            month: snapshot.data().month,
+            year: snapshot.data().year
           }),
           await deleteDoc(doc(db, "acadSummaryreport", queue.id))
         )
@@ -350,6 +367,7 @@ const Report = () => {
             </Toolbar>
           </AppBar>
         </Box>
+        
         <Box
           py={5}
           mt={10}
@@ -641,7 +659,7 @@ const Report = () => {
               Delete All
             </Button>
             <Button onClick={viewAll} variant="outlined" color="pupMaroon">
-              Refresh
+              View All  
             </Button>
             <Button variant="outlined" color="pupMaroon" onClick={handlePrint}>
               Print
