@@ -53,28 +53,28 @@ const Sidebar = () => {
   const [show, setShow] = useState(false);
   const navigate = useNavigate();
 
-  const registrarcontroll = () => {
+  const acadHeadcontroll = () => {
     navigate("/reg-controll");
   };
 
-  const registrarAnnouncement = () => {
+  const acadHeadAnnouncement = () => {
     navigate("/reg-announcement");
   };
 
-  const registrarReport = () => {
+  const acadHeadreport = () => {
     navigate("/reg-report");
   };
   const acadHeadarchive = () => {
     navigate("/reg-archive");
   };
-
-  const registrarLogout = () => {
+  const acadHeadSignOut = () => {
     localStorage.removeItem("Username1");
     localStorage.removeItem("Password1");
     navigate("/admin");
   };
   return (
     <>
+      
       <IconButton
         size="large"
         edge="start"
@@ -102,7 +102,7 @@ const Sidebar = () => {
                       textTransform: "uppercase",
                     }}
                   >
-                    Registrar office
+                    Registar office
                   </Typography>
                   <img src={logo} alt="" height={100} />
                   <Typography>PUPSMB-QMS</Typography>
@@ -111,7 +111,7 @@ const Sidebar = () => {
             </Box>
             <List>
               <ListItem disablePadding>
-                <ListItemButton onClick={registrarcontroll}>
+                <ListItemButton onClick={acadHeadcontroll}>
                   <ListItemIcon>
                     <Dashboard />
                   </ListItemIcon>
@@ -126,7 +126,7 @@ const Sidebar = () => {
                 </ListItemButton>
               </ListItem>
               <ListItem disablePadding>
-                <ListItemButton onClick={registrarAnnouncement}>
+                <ListItemButton onClick={acadHeadAnnouncement}>
                   <ListItemIcon>
                     <Campaign />
                   </ListItemIcon>
@@ -150,7 +150,7 @@ const Sidebar = () => {
                     primary={
                       <Typography style={{ fontSize: "1.5rem" }}>
                         <Link
-                          href="https://pupqueuemanagement.netlify.app/reg-monitor"
+                          href="https://pupsmb-ewait.netlify.app/reg-monitor"
                           target="_blank"
                           rel="noreferrer"
                           underline="none"
@@ -164,7 +164,7 @@ const Sidebar = () => {
                 </ListItemButton>
               </ListItem>
               <ListItem disablePadding>
-                <ListItemButton onClick={registrarReport}>
+                <ListItemButton onClick={acadHeadreport}>
                   <ListItemIcon>
                     <InsertChartOutlinedOutlined />
                   </ListItemIcon>
@@ -194,7 +194,7 @@ const Sidebar = () => {
                 </ListItemButton>
               </ListItem>
               <ListItem disablePadding>
-                <ListItemButton onClick={registrarLogout}>
+                <ListItemButton onClick={acadHeadSignOut}>
                   <ListItemIcon>
                     <Logout />
                   </ListItemIcon>

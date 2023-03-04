@@ -11,6 +11,7 @@ import {
   TableCell,
   TableBody,
   Button,
+  Pagination,
   Paper,
   Tooltip,
 } from "@mui/material";
@@ -90,17 +91,17 @@ const AdminQueueline = () => {
   useEffect(() => {
     const checkTime = async () => {
       let check = 0;
-      const coll = collection(db, "regNowserving");
+      const coll = (collection(db, "regNowserving"));
       const snapshot = await getCountFromServer(coll);
       check = snapshot.data().count;
 
-      if (check >= 1) {
+      if (check >=1) {
         setIsDisable(true);
-      } else if (check <= 1) {
+      } else if (check < 1) {
         setIsDisable(false);
       }
     };
-    const intervalId = setInterval(checkTime, 3000);
+    const intervalId = setInterval(checkTime, 1000);
     return () => clearInterval(intervalId);
   }, []);
 
@@ -202,15 +203,15 @@ const AdminQueueline = () => {
           margin: "auto",
         }}
       >
-        <Table sx={{ tableLayout: "auto", height: "maxContent" }}>
+        <Table>
           <ThemeProvider theme={styleTableHead}>
             <TableHead sx={{ position: "sticky", top: 0, zIndex: 10 }}>
               <TableRow>
                 <TableCell
                   sx={{
                     position: "sticky",
-                    left: 0,
-                    zIndex: 5,
+                    left: "0",
+                    zIndex: "5",
                     backgroundColor: "#880000",
                   }}
                 >
@@ -236,8 +237,8 @@ const AdminQueueline = () => {
                   <TableCell
                     sx={{
                       position: "sticky",
-                      left: 0,
-                      zIndex: 5,
+                      left: "0",
+                      zIndex: "5",
                       backgroundColor: "#ffffff",
                     }}
                   >
@@ -286,8 +287,8 @@ const AdminQueueline = () => {
                   <TableCell
                     sx={{
                       position: "sticky",
-                      left: 0,
-                      zIndex: 5,
+                      left: "0",
+                      zIndex: "5",
                       backgroundColor: "#ffffff",
                     }}
                   >

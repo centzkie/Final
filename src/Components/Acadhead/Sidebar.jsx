@@ -150,7 +150,7 @@ const Sidebar = () => {
                     primary={
                       <Typography style={{ fontSize: "1.5rem" }}>
                         <Link
-                          href="https://pupqueuemanagement.netlify.app/acad-head-monitor"
+                          href="https://pupsmb-ewait.netlify.app/acad-head-monitor"
                           target="_blank"
                           rel="noreferrer"
                           underline="none"

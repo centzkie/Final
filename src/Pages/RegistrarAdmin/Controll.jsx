@@ -18,13 +18,20 @@ import Skip from "../../Components/Registrar/AdminSkip";
 const Controll = () => {
   const navigate = useNavigate();
   useEffect(() => {
-    if (
-      localStorage.getItem("Password1") !== "admin" &&
-      localStorage.getItem("Username1") !== "adminreg"
-    ) {
-      navigate("/admin");
-    }
-  });
+    const checkTime = async() => {
+      if (
+            (localStorage.getItem("Password1") !== "admin" &&
+              localStorage.getItem("Username1") !== "adminreg")
+          ) {
+            navigate("/admin");
+      }
+      count();
+    };
+    
+    const intervalId = setInterval(checkTime,1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
   return (
     <>
       <ThemeProvider theme={Theme}>

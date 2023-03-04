@@ -79,7 +79,7 @@ const styleTableBody = createTheme({
 const AdminNowServing = () => {
   const [qlUserData, setQluserData] = useState([]);
   const [qlCurrentPage, setQlCurrentPost] = useState(1);
-  const QlPostPerPage = 2;
+  const QlPostPerPage = 1;
   let pages = [];
 
   const lastPostIndex = qlCurrentPage * QlPostPerPage;
@@ -87,10 +87,18 @@ const AdminNowServing = () => {
   const currentPost = qlUserData.slice(firstPostIndex, lastPostIndex);
   const userCollectionHistory = collection(db, "regSummaryreport");
   const userCollectionSkip = collection(db, "regSkip");
+  const userCollectionNowserving = collection(db, "regNowserving");
 
   const current = new Date();
   const [date, setDate] = useState(
-    `${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()}`
+    `${current.getDate()}/${
+      current.getMonth() + 1
+    }/${current.getFullYear()} - ${current.toLocaleTimeString("en-US")}`
+  );
+  const [day, setDay] = useState(
+    `${current.getDate()}/${
+      current.getMonth() + 1
+    }/${current.getFullYear()}`
   );
 
   for (let i = 1; i <= Math.ceil(qlUserData.length / QlPostPerPage); i++) {
@@ -103,8 +111,7 @@ const AdminNowServing = () => {
 
   // QueueLinetable Query
   const tableQueryQueue = async () => {
-    const acadQueueCollection = collection(db, "regNowserving");
-    const q = query(acadQueueCollection, orderBy("timestamp", "asc"));
+    const q = query(userCollectionNowserving, orderBy("timestamp", "asc"));
     const unsub = onSnapshot(q, (snapshot) =>
       setQluserData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     );
@@ -132,6 +139,9 @@ const AdminNowServing = () => {
       ticket: snapshot.data().ticket,
       timestamp: serverTimestamp(),
       date: date,
+      day: day,
+      month: (current.getMonth() + 1) + "/" + current.getFullYear(),
+      year: current.getFullYear()
     });
     directDeleteUser(id);
   };
@@ -152,6 +162,9 @@ const AdminNowServing = () => {
       ticket: snapshot.data().ticket,
       timestamp: serverTimestamp(),
       date: date,
+      day: day,
+      month: (current.getMonth() + 1) + "/" + current.getFullYear(),
+      year: current.getFullYear()
     });
     directDeleteUser(id);
   };
@@ -194,8 +207,8 @@ const AdminNowServing = () => {
                 <TableCell
                   sx={{
                     position: "sticky",
-                    left: 0,
-                    zIndex: 5,
+                    left: "0",
+                    zIndex: "5",
                     backgroundColor: "#880000",
                   }}
                 >
@@ -221,8 +234,8 @@ const AdminNowServing = () => {
                   <TableCell
                     sx={{
                       position: "sticky",
-                      left: 0,
-                      zIndex: 4,
+                      left: "0",
+                      zIndex: "5",
                       backgroundColor: "#ffffff",
                     }}
                   >

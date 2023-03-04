@@ -23,6 +23,7 @@ import img from "../../Img/seal.png";
 import Sidebar from "../../Components/Registrar/Sidebar";
 import Theme from "../../CustomTheme";
 import { db } from "../../firebase-config";
+import { useNavigate } from "react-router-dom";
 import {
   collection,
   addDoc,
@@ -33,7 +34,6 @@ import {
   deleteDoc,
   onSnapshot,
 } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
 
 // table header syle
 const styleTableHead = createTheme({
@@ -85,15 +85,22 @@ const Announcement = () => {
   const announceCollection = collection(db, "regAnnouncement");
   const [userData, setUserData] = useState([]);
   const navigate = useNavigate();
-
+  
   useEffect(() => {
-    if (
-      localStorage.getItem("Password1") !== "admin" &&
-      localStorage.getItem("Username1") !== "adminreg"
-    ) {
-      navigate("/admin");
-    }
-  });
+    const checkTime = async() => {
+      if (
+            (localStorage.getItem("Password1") !== "admin" &&
+              localStorage.getItem("Username1") !== "adminreg")
+          ) {
+            navigate("/admin");
+      }
+    };
+    
+    const intervalId = setInterval(checkTime, 3000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   const insert = async () => {
     if (announce.length > 0) {
       if (window.confirm("Are you sure you wish to add this announcement ?")) {
@@ -113,16 +120,16 @@ const Announcement = () => {
   }, []);
 
   const directDelete = async (email) => {
-    const userDoc = doc(db, "regAnnouncement", email);
-    if (window.confirm("Are you sure you wish to delete this announcement ?")) {
-      await deleteDoc(userDoc);
+    if(window.confirm("Are you sure want to delete this Announcement?")){
+      const userDoc = doc(db, "regAnnouncement", email);
+    await deleteDoc(userDoc);
     }
   };
 
   // Announcement Table
   const tableQueryAnnouncement = async () => {
     const acadQueueCollection = collection(db, "regAnnouncement");
-    const q = query(acadQueueCollection, orderBy("timestamp", "asc"));
+    const q = query(acadQueueCollection, orderBy("timestamp", "desc"));
     const unsub = onSnapshot(q, (snapshot) =>
       setUserData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     );
@@ -223,5 +230,4 @@ const Announcement = () => {
     </>
   );
 };
-
 export default Announcement;

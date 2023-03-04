@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Stack,
@@ -18,10 +18,10 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import Appbar from "../Components/Landing/Appbar";
 import Footer from "../Components/Landing/Footer";
 import { db } from "../firebase-config";
-import { collection, query, getDocs, where } from "firebase/firestore";
+import { collection, query, getDocs, where, getCountFromServer } from "firebase/firestore";
 
+import Usertable from "../Components/Acadhead/Usertable";
 import waves from "../Img/wave.svg";
-import Usertable from "../Components/Registrar/Usertable";
 const labelNameStyle = {
   fontWeight: "bold",
 };
@@ -32,6 +32,12 @@ const TransactionAcad = () => {
   let [transactions, setTransactions] = useState("");
   let [ticket, setTicket] = useState("");
   let filters = "";
+  let [aheadTicket, setAheadTicket] = useState(0);
+  //let [fetchCount, setFetchcount] = useState(0);
+  let hold = 0;
+  let k = 0;
+  let l = 0;
+  let m = 0;
 
   const searchUser = async () => {
     let j = 0;
@@ -62,21 +68,38 @@ const TransactionAcad = () => {
       j++;
     });
 
-    q = query(collection(db, "regQueuing"), where("email", "==", search));
+    q = query(
+      collection(db, "regPriority"),
+      where("studentNumber", "==", search)
+    );
     querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       filters = (doc.id, " => ", doc.data());
       j++;
     });
 
-    q = query(collection(db, "regNowserving"), where("email", "==", search));
+    q = query(collection(db, "regQueuing"), where("contact", "==", search));
     querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       filters = (doc.id, " => ", doc.data());
       j++;
     });
 
-    q = query(collection(db, "regSkip"), where("email", "==", search));
+    q = query(collection(db, "regNowserving"), where("contact", "==", search));
+    querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      filters = (doc.id, " => ", doc.data());
+      j++;
+    });
+
+    q = query(collection(db, "regSkip"), where("contact", "==", search));
+    querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      filters = (doc.id, " => ", doc.data());
+      j++;
+    });
+
+    q = query(collection(db, "regPriority"), where("contact", "==", search));
     querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       filters = (doc.id, " => ", doc.data());
@@ -87,7 +110,7 @@ const TransactionAcad = () => {
       alert("Please fill the required input!");
     } else {
       if (j === 0) {
-        alert("Email or Student Number not found");
+        alert("Contact Number or Student Number not found");
         clearForm();
       } else {
         setName(filters.name);
@@ -101,11 +124,6 @@ const TransactionAcad = () => {
     setName("");
     setTransactions("");
     setTicket("");
-  };
-
-  const navigate = useNavigate();
-  const transaction = () => {
-    navigate("/generateform-reg");
   };
 
   return (
@@ -130,12 +148,12 @@ const TransactionAcad = () => {
                 xs: "18px",
               }}
             >
-              Search your transaction using Email / Student No. ?
+              Search your transaction using Email/Student Num
             </Typography>
             <TextField
               type="email"
               id="Username"
-              label="Email/StudentNo."
+              label="Contact/StudentNo."
               required
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -167,6 +185,7 @@ const TransactionAcad = () => {
             sx={{
               px: { lg: 50, md: 20, xs: 0 },
               pt: { lg: 5, md: 20, xs: 5 },
+              mb: "10px",
             }}
           >
             <Box

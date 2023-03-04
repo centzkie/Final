@@ -312,7 +312,6 @@ const Report = () => {
     else if(filter === year){
       document="year";
     }
-    console.log(document + " " + filter);
     let acadQueueCollection = collection(db, "acadSummaryreport");
     let q = query(acadQueueCollection, where(document, "==", filter));
     let unsub = onSnapshot(q, (snapshot) =>

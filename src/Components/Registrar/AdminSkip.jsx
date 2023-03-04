@@ -6,11 +6,9 @@ import {
   Table,
   TableHead,
   TableRow,
-  Box,
   TableCell,
   TableBody,
   Tooltip,
-  Pagination,
   Stack,
   Button,
   ThemeProvider,
@@ -27,6 +25,7 @@ import {
   serverTimestamp,
   addDoc,
   getCountFromServer,
+  where
 } from "firebase/firestore";
 import { db } from "../../firebase-config";
 
@@ -83,13 +82,31 @@ const styleTableBody = createTheme({
 });
 const AdminSkip = () => {
   const [userData, setUserData] = useState([]);
+  const [qlCurrentPage, setQlCurrentPost] = useState(1);
   const userCollectionHistory = collection(db, "regSummaryreport");
   const userCollectionNowserving = collection(db, "regNowserving");
+  const userCollectionSkip = collection(db, "regSkip");
+
   const current = new Date();
   const [isDisable, setIsDisable] = useState(false);
 
+  const QlPostPerPage = 5;
+  let pages = [];
+
+  const lastPostIndex = qlCurrentPage * QlPostPerPage;
+  const firstPostIndex = lastPostIndex - QlPostPerPage;
+  const currentPost = userData.slice(firstPostIndex, lastPostIndex);
+
   const [date, setDate] = useState(
-    `${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()}`
+    `${current.getDate()}/${
+      current.getMonth() + 1
+    }/${current.getFullYear()} - ${current.toLocaleTimeString("en-US")}`
+  );
+  
+  const [day, setDay] = useState(
+    `${current.getDate()}/${
+      current.getMonth() + 1
+    }/${current.getFullYear()}`
   );
 
   useEffect(() => {
@@ -99,24 +116,24 @@ const AdminSkip = () => {
   useEffect(() => {
     const checkTime = async () => {
       let check = 0;
-      const coll = collection(db, "regNowserving");
+      const coll = query(collection(db, "regNowserving"));
       const snapshot = await getCountFromServer(coll);
       check = snapshot.data().count;
 
       if (check >= 1) {
         setIsDisable(true);
-      } else if (check <= 1) {
+      } else if (check < 1) {
         setIsDisable(false);
       }
     };
-    const intervalId = setInterval(checkTime, 3000);
+    const intervalId = setInterval(checkTime, 1000);
     return () => clearInterval(intervalId);
   }, []);
 
   // QueueLinetable Query
   const tableQuerySkip = async () => {
-    const acadQueueCollection = collection(db, "regSkip");
-    const q = query(acadQueueCollection, orderBy("timestamp", "asc"));
+    const q = query(userCollectionSkip, 
+      orderBy("timestamp", "asc"));
     const unsub = onSnapshot(q, (snapshot) =>
       setUserData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     );
@@ -142,7 +159,7 @@ const AdminSkip = () => {
       userType: snapshot.data().userType,
       yearSection: snapshot.data().yearSection,
       ticket: snapshot.data().ticket,
-      timestamp: serverTimestamp(),
+      timestamp: serverTimestamp()
     });
     directDeleteUser(id);
   };
@@ -162,6 +179,9 @@ const AdminSkip = () => {
       ticket: snapshot.data().ticket,
       timestamp: serverTimestamp(),
       date: date,
+      day: day,
+      month: (current.getMonth() + 1) + "/" + current.getFullYear(),
+      year: current.getFullYear()
     });
     directDeleteUser(id);
   };
@@ -191,7 +211,7 @@ const AdminSkip = () => {
       >
         <Table sx={{ tableLayout: "auto", height: "maxContent" }}>
           <ThemeProvider theme={styleTableHead}>
-            <TableHead sx={{ position: "sticky", top: 0 }}>
+            <TableHead sx={{ position: "sticky", top: 0, zIndex: 1 }}>
               <TableRow>
                 <TableCell
                   sx={{
@@ -218,7 +238,7 @@ const AdminSkip = () => {
           <ThemeProvider theme={styleTableBody}>
             {/* Table Body */}
             <TableBody>
-              {userData.map((queue, index) => (
+              {currentPost.map((queue, index) => (
                 <TableRow key={index}>
                   <TableCell
                     sx={{
