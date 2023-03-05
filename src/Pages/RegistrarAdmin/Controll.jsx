@@ -1,4 +1,4 @@
-import { React, useEffect } from "react";
+import { React, useEffect, useState } from "react";
 import {
   AppBar,
   ThemeProvider,
@@ -25,7 +25,6 @@ const Controll = () => {
           ) {
             navigate("/admin");
       }
-      count();
     };
     
     const intervalId = setInterval(checkTime,1000);
