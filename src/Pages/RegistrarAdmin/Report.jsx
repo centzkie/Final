@@ -26,7 +26,7 @@ import {
 } from "@mui/material";
 import { SearchOutlined, Delete } from "@mui/icons-material";
 import img from "../../Img/seal.png";
-import Sidebar from "../../Components/Acadhead/Sidebar";
+import Sidebar from "../../Components/Registrar/Sidebar";
 import Theme from "../../CustomTheme";
 import { db } from "../../firebase-config";
 import {
