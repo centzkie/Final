@@ -23,17 +23,17 @@ const Cards = () => {
   const [isDisabled, setIsDisabled] = useState(false);
   //const timezone = "Asia/Manila";
   const [userData, setUserData] = useState([]);
-  let x = 0;
-  let stop = 0;
+  const [userData1, setUserData1] = useState([]);
+
 
   // to disable time in specific time only
   useEffect(() => {
     const checkTime = async() => {
       let currentTime = moment();
-      let startTime = moment("07:00", "HH:mm");
-      let endTime = moment("16:00", "HH:mm");
+      let startTime = moment("08:00", "HH:mm");
+      let endTime = moment("10:17", "HH:mm");
       tableQueryTicket();
-
+      tableQueryTicket1();
       if (currentTime.isBetween(startTime, endTime)) {
         setIsDisabled(false);
         sessionStorage.setItem("Auth", true);
@@ -44,11 +44,11 @@ const Cards = () => {
         userData.map(async (queue) => ((docRef = doc(db, "acadTicket", queue.id)),
             await deleteDoc(doc(db, "acadTicket", queue.id))
         ));
+        let docRef1 = doc(db, "regTicket", "l");
+        userData1.map(async (queue) => ((docRef1 = doc(db, "regTicket", queue.id)),
+            await deleteDoc(doc(db, "regTicket", queue.id))
+        ));
       }
-
-      const coll1 = collection(db, "acadTicket");
-      const snapshot1 = await getCountFromServer(coll1);
-      stop = snapshot1.data().count;
       
     };
     
@@ -57,14 +57,17 @@ const Cards = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  useEffect(() => {
-    tableQueryTicket();
-  }, []);
-
   const tableQueryTicket = async () => {
     const acadQueueCollection = collection(db, "acadTicket");
     const unsub = onSnapshot(acadQueueCollection, (snapshot) =>
       setUserData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    );
+    return unsub;
+  };
+  const tableQueryTicket1 = async () => {
+    const acadQueueCollection = collection(db, "regTicket");
+    const unsub = onSnapshot(acadQueueCollection, (snapshot) =>
+      setUserData1(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     );
     return unsub;
   };

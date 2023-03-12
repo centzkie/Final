@@ -118,7 +118,6 @@ const AdminQueueline = () => {
     const unsub = onSnapshot(q, (snapshot) =>
       setQluserData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     );
-
     return unsub;
   };
   const tableQueryPriority = async () => {

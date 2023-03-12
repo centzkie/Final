@@ -109,6 +109,8 @@ const AdminQueueline = () => {
   useEffect(() => {
     tableQueryQueue();
     tableQueryPriority();
+    console.log("NAg rurun")
+
   }, []);
 
   // QueueLinetable Query
@@ -119,7 +121,6 @@ const AdminQueueline = () => {
     const unsub = onSnapshot(q, (snapshot) =>
       setQluserData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
     );
-
     return unsub;
   };
   const tableQueryPriority = async () => {
