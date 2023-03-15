@@ -31,7 +31,7 @@ const Cards = () => {
     const checkTime = async() => {
       let currentTime = moment();
       let startTime = moment("08:00", "HH:mm");
-      let endTime = moment("10:17", "HH:mm");
+      let endTime = moment("17:00", "HH:mm");
       tableQueryTicket();
       tableQueryTicket1();
       if (currentTime.isBetween(startTime, endTime)) {
